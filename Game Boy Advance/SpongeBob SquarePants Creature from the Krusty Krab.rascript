@@ -167,7 +167,7 @@ achievement(
     description = "Collect an Electric Cloud for the first time",
     id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 11:35:54 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit5(0x00706C) > prev(bit5(0x00706C))) ||
-               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit5(0x00707C) == 1))
+               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit5(0x00707C) > prev(bit5(0x00707C))))
 )
 
 achievement(
@@ -175,7 +175,7 @@ achievement(
     description = "Collect a Moon Shower for the first time",
     id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 11:35:55 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit3(0x00706C) > prev(bit3(0x00706C))) ||
-               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit3(0x00707C) > prev(bit3(0x000001))))
+               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit3(0x00707C) > prev(bit3(0x00707C))))
 )
 
 achievement(
