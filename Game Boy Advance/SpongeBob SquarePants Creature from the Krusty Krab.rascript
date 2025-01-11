@@ -143,7 +143,7 @@ achievement(
 achievement(
     title = "\"M\" For Mini", points = 1,
     description = "Collect an extra life for the first time",
-    id = 445588, badge = "521853", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 10:41:10 PM",
+    id = 445588, badge = "521853", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 11:35:54 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 &&
                 (bit0(0x00706C) > prev(bit0(0x00706C)) || bit1(0x00706C) > prev(bit1(0x00706C)) ||
                     bit2(0x00706C) > prev(bit2(0x00706C))
@@ -157,7 +157,7 @@ achievement(
 achievement(
     title = "Thank You, Sir Cecil", points = 1,
     description = "Collect a Snooze Wink for the first time",
-    id = 445595, badge = "521854", published = "7/5/2024 4:07:09 AM", modified = "1/10/2025 10:41:10 PM",
+    id = 445595, badge = "521854", published = "7/5/2024 4:07:09 AM", modified = "1/10/2025 11:35:54 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit4(0x00706C) > prev(bit4(0x00706C))) ||
                (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit4(0x00707C) > prev(bit4(0x00707C))))
 )
@@ -165,25 +165,25 @@ achievement(
 achievement(
     title = "I Feel All Tingly Inside", points = 1,
     description = "Collect an Electric Cloud for the first time",
-    id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 10:41:11 PM",
+    id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 11:35:54 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit5(0x00706C) > prev(bit5(0x00706C))) ||
-               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit5(0x00707C) > prev(bit5(0x00707C)))
+               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit5(0x00707C) == 1))
 )
 
 achievement(
     title = "Where Did Everybody Go?!", points = 1,
     description = "Collect a Moon Shower for the first time",
-    id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 10:41:11 PM",
+    id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 11:35:55 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit3(0x00706C) > prev(bit3(0x00706C))) ||
-               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit3(0x00707C) > prev(bit3(0x00707C))))
+               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit3(0x00707C) > prev(bit3(0x000001))))
 )
 
 achievement(
     title = "Maximum Overdrive", points = 1,
     description = "Collect a Speed Star for the first time",
-    id = 445591, badge = "521856", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 10:41:12 PM",
+    id = 445591, badge = "521856", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 11:35:55 PM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit7(0x00706C) > prev(bit7(0x00706C))) ||
-               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit7(0x00707C) > prev(bit7(0x00707C1))))
+               (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit7(0x00707C) > prev(bit7(0x00707C))))
 )
 
 achievement(
@@ -510,7 +510,7 @@ leaderboard(
                  measured(tally(0, byte(0x000C1A) == 1)) && unless(byte(0x00104C) == 1) &&
                  never((byte(0x000C1A) == 1 && word(0x000062) == 0))
              ),
-    format = "FRAMES"
+    format = "FRAMES", lower_is_better = true
 )
 
 leaderboard(
@@ -528,7 +528,7 @@ leaderboard(
                  measured(tally(0, byte(0x000C1A) == 1)) && unless(byte(0x00104C) == 1) &&
                  never((byte(0x000C1A) == 1 && word(0x000062) == 0))
              ),
-    format = "FRAMES"
+    format = "FRAMES", lower_is_better = true
 )
 
 rich_presence_conditional_display( &&
