@@ -165,7 +165,7 @@ achievement(
 achievement(
     title = "I Feel All Tingly Inside", points = 1,
     description = "Collect an Electric Cloud for the first time",
-    id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 11:35:54 PM",
+    id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/11/2025 12:22:22 AM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit5(0x00706C) > prev(bit5(0x00706C))) ||
                (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit5(0x00707C) > prev(bit5(0x00707C))))
 )
@@ -173,7 +173,7 @@ achievement(
 achievement(
     title = "Where Did Everybody Go?!", points = 1,
     description = "Collect a Moon Shower for the first time",
-    id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 11:35:55 PM",
+    id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/11/2025 12:22:22 AM",
     trigger = ((byte(0x0001F5) == 0 && byte(0x000C0A) == 1 && bit3(0x00706C) > prev(bit3(0x00706C))) ||
                (byte(0x0001F5) == 8 && byte(0x000C1A) == 1 && bit3(0x00707C) > prev(bit3(0x00707C))))
 )
@@ -189,13 +189,15 @@ achievement(
 achievement(
     title = "Are You Ready To Be a Winner?", points = 3,
     description = "Unlock all mini-games by finding each hidden arcade cabinet",
-    id = 445573, badge = "521857", published = "7/5/2024 4:06:59 AM", modified = "1/5/2025 10:40:21 PM",
-    trigger = ((byte(0x0001F5) == 0 && measured(bitcount(0x006FE4) == 8) && prev(byte(0x000C0A)) == 1 &&
+    id = 445573, badge = "521857", published = "7/5/2024 4:06:59 AM", modified = "1/14/2025 3:11:19 AM",
+    trigger = ((prev(bitcount(0x000238)) != 8 && byte(0x0001F5) == 0 && measured(bitcount(0x000238) == 8) &&
+                prev(byte(0x000C0A)) == 1 &&
                 (prev(byte(0x000158)) == 48 || prev(byte(0x000158)) == 52 || prev(byte(0x000158)) == 56 ||
                     prev(byte(0x000158)) == 60 || prev(byte(0x000158)) == 66 || prev(byte(0x000158)) == 71 ||
                     prev(byte(0x000158)) == 72 || prev(byte(0x000158)) == 76
                 )) ||
-               (byte(0x0001F5) == 8 && measured(bitcount(0x006FF4) == 8) && prev(byte(0x000C1A)) == 1 &&
+               (prev(bitcount(0x000238)) != 8 && byte(0x0001F5) == 8 && measured(bitcount(0x000238) == 8) &&
+                prev(byte(0x000C1A)) == 1 &&
                 (prev(byte(0x000158)) == 48 || prev(byte(0x000158)) == 52 || prev(byte(0x000158)) == 56 ||
                     prev(byte(0x000158)) == 60 || prev(byte(0x000158)) == 66 || prev(byte(0x000158)) == 71 ||
                     prev(byte(0x000158)) == 72 || prev(byte(0x000158)) == 76
@@ -443,8 +445,8 @@ achievement(
 
 achievement(
     title = "Jellyfishing", points = 4,
-    description = "Reach Round 6 of the Jellyfishing minigame without getting stung",
-    id = 445579, badge = "535275", published = "7/5/2024 4:07:01 AM", modified = "1/10/2025 10:58:17 PM",
+    description = "Reach Round 6 of the Jellyfishing minigame",
+    id = 445579, badge = "535275", published = "7/5/2024 4:07:01 AM", modified = "1/11/2025 9:29:33 PM",
     trigger = byte(0x000158) == 83 && prev(byte(0x009876)) == 5 && byte(0x009876) == 6
 )
 
