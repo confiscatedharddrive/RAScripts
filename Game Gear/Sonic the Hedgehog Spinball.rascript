@@ -1,10 +1,8 @@
-///Code cleanup TBD for clarity and ease of reading
-
 // Sonic the Hedgehog Spinball
 // #ID = 12650
 // RA Hash: 8e3b44fda375ad9748b678e9c6b45502
 
-// Code Notes (to be added)
+// Code Notes
 
 // 0x0731: [BitCount] Player Input
 //         Bit0: Up
@@ -27,16 +25,34 @@
 //         0x09: Cutscene with Sonic and Tails
 //         0x0a: Bonus Cage (same value used for all 3)
 function table() => byte(0x000884)
+function toxic_pools() => byte(0x000884) == 0
 function toxic_pools_boss() => byte(0x000884) == 1
+function lava_powerhouse() => byte(0x000884) == 2
 function lava_powerhouse_boss() => byte(0x000884) == 3
+function the_machine() => byte(0x000884) == 4
 function the_machine_boss() => byte(0x000884) == 5
+function final_showdown() => byte(0x000884) == 6
 function final_showdown_boss() => byte(0x000884) == 7
 function cutscene() => byte(0x000884) == 8
+function bonus() => byte(0x000884) == 10
+
+// 0x0AAA: [8-bit] Screen Indicators
+//          0x61: Level Splash
+//          0x62: Opening Cutscene 1
+//          0x64: Opening Cutscene 2
+//          0x65: Credits
+//          0x69: Continue Screen
+//          0x5d: Pinball Table (any stage)
+//          0x32: Boss Arena (any stage except Machine)
+//          0x49: The Machine Boss (unstable memory here)
+//          0x19: End Cutscene
+function end_cutscene() => byte(0x000AAA) == 25
 
 // 0x0A26: [8-bit] Player Status
 //         0xff: Control disabled/Level screen transition
 //         0x00: Control enabled
 //         0x01: Continue screen
+function player_status() => byte(0x000A26)
 
 // 0x1A51: [8-bit] Demo 1
 //         0x00: Inactive
@@ -46,11 +62,15 @@ function cutscene() => byte(0x000884) == 8
 //         0x01: Active
 function demo1_active() => byte(0x001A51) == 1
 function demo2_active() => byte(0x001A54) == 1
+function demo_detection() =>
+    unless(demo1_active()) ||
+    unless(demo2_active())
 
 // 0x1E97: [8-bit] Difficulty
-//         0x00: Easy
-//         0x01: Normal
-function difficulty_check() => byte(0x001E97) == 1
+//         0x00: Normal
+//         0x01: Easy
+function difficulty_rpc() => byte(0x001E97)
+function difficulty_check() => byte(0x001E97) == 0
 
 // 0x1E96: [8-bit] Options Menu Continues
 //         0x03: 3 continues
@@ -65,11 +85,18 @@ function continues_check() => byte(0x001E96) == 5
 //         0x06: Level Skip Active/Giant Sprites (shared value)
 //         0x07: Fast BGM
 //         0x08: Float Cheat                     
-function levelskip_cheat_active() => byte(0x001A43)
-function float_cheat_active() => byte(0x001A43)
+function message_box() => byte (0x001A43) == 1
+function levelskip_cheat_active() => byte(0x001A43) == 6
+function float_cheat_active() => byte(0x001A43) == 8
 function cheat_detection() =>
-    unless(levelskip_cheat_active() == 1) ||
-    unless(float_cheat_active() == 1)
+    unless(levelskip_cheat_active()) ||
+    unless(float_cheat_active())
+
+// 0x1A45: [8-bit] Message Box Modifier
+//         0x00: Inactive
+//         0x10: Birthday Message
+//         0x20: More Codes Message
+function dev_secret() => byte(0x001A45) == 32
 
 // 0x0B27: [8-bit] Current Stage
 //         0x00: Toxic Pools/Cutscene/Boss room
@@ -79,10 +106,6 @@ function cheat_detection() =>
 //         0x02: The Machine
 //         0x20: Bonus Cage 3
 //         0x04: Final Showdown/Level Splash Screen
-function toxic_pools() => byte(0x000B27) == 0
-function lava_powerhouse() => byte(0x000B27) == 1
-function the_machine() => byte(0x000B27) == 2
-function final_showdown() => byte(0x000B27) == 4
 function bonus_cage_1() => byte(0x000B27) == 8
 function bonus_cage_2() => byte(0x000B27) == 10
 function bonus_cage_3() => byte(0x000B27) == 20
@@ -106,6 +129,7 @@ function chaos_emerald() => byte(0x001E98)
 //         0x4c, 0x4d, 0x4e: Chaos Emerald Get
 //         0x5c: Credits
 function game_clear() => byte(0x001E19) == 92
+function dev_message() => byte(0x001E19) == 79
 
 // 0x1A16: [8-bit] Lives Count
 //         Integer value equal to current life count (ex. 0x05 = 5 lives, 0x04 = 4 lives, etc)
@@ -115,19 +139,19 @@ function lives() => byte(0x001A16)
 // 0x14B2: [8-bit] Secret Monitor Status
 //         0x80: Available in stage and unopen
 //         0x40: Opened
-function secret_1() => byte(0x0014B2)
+function secret_1() => byte(0x0014B2) == 64
 
 // 0x14B3: [8-bit] Location Indicator/Monitor Broken(?)
 //         Seems to update depending on where you are in the map and whether or not the 1up box has been opened.
 //         0x80: In secret area or boss room/1up Monitor unopened
 //         0x40: 1up box opened
-function secret_2() => byte(0x0014B3)
+function secret_2() => byte(0x0014B3) == 64
 
 // 0x14B4: [8-bit] Third Item Box
 //         Value is used for 1up monitor in Lava Powerhouse. The continue box takes the place of the usual 1up value in 0x014B3
 //         0x80: Not open
 //         0x40: Open
-function secret_3() => byte(0x0014B4)
+function secret_3() => byte(0x0014B4) == 64
 
 // 0x1A18: [8-bit BCD] Cumulative Score (per 1 mil)
 //         Increments every 1 million earned. Ex:
@@ -145,6 +169,16 @@ function score_ten_thousands() => byte(0x001A19)
 //         Increments per 5 for every 500 points. Ex:
 //         0x25: 2500 points
 function score_five_hundreds() => byte(0x001A1A)
+
+// 0x1C30: [8-bit] Bonus Cage Ring Count (per 100)
+//         Integer value equal to 100 rings. 
+//         If player has for example, 104 rings, then it will show as 0x01 and will be used to calcute in addition to per ring count from 
+//         0x1C31 for total rings acquired. (ex. 0x01 = 100 rings. 0x01 + 0x04 from 0x1C31 = 104 rings)
+function bonus_ring() => byte (0x001C30)
+
+// 0x1C31: [8-bit] Bonus Cage Ring Count (per 1)
+//         Integer value equal to ring count. Rings from boxes are added at the end of the bonus cage if successfully cleared. 
+//         If ring count is over 100, value loops around and gets counted in total from 0x1C30. (ex. 0x89 = 89 rings. 0x04 + 0x01 from 0x1c30 = 104 rings)
 
 // 0x1A1B: [8-bit] Continues Count
 //         Integer value equal to number of continues player has (ex. 0x02 = 2 continues)
@@ -232,8 +266,705 @@ function machine_hp_4() => byte(0x000DF4)
 //         0x01: Destroyed
 function machine_hp_5() => byte(0x000EEA)
 
+// Core Achievements
 
-//Rich Presence 
+achievement(
+    title = "Is This Safe To Touch?",
+    description = "Collect your first Emerald in Toxic Pools",
+    id = 400629, 
+    badge = "458985",
+    points = 2,
+    trigger = 
+        demo_detection() &&
+        cheat_detection() &&
+        toxic_pools() &&
+        chaos_emerald() == 1
+)
+
+achievement(
+    title = "Pipe Cleaning",
+    description = "Collect two Emeralds in Toxic Pools",
+    id = 400630,
+    badge = "484920",
+    points = 2,
+    trigger =
+        demo_detection() &&
+        cheat_detection() &&
+        toxic_pools() &&
+        chaos_emerald() == 2
+)
+
+achievement(
+    title = "Crashing The Toxic Pool Party",
+    description = "Collect all Emeralds in Toxic Pools and unlock the Boss room",
+    id = 400631,
+    badge = "484921",
+    points = 2,
+    trigger = 
+        demo_detection() &&
+        cheat_detection() &&
+        toxic_pools() &&
+        chaos_emerald() == 3
+)
+
+achievement(
+    title = "Soak Ya Later, Egg Head!",
+    description = "Clear Toxic Pools on Normal Difficulty with Default Continues",
+    id = 400612,
+    badge = "458986",
+    points = 10,
+    type="progression",
+    trigger =
+        demo_detection() &&
+        difficulty_check() &&
+        continues_check() &&
+        cheat_detection() &&
+        never(toxic_pools()) &&
+        never(demo1_active()) && // a bit redundant in hindsight
+        never(demo2_active()) &&
+        (
+            toxic_pools_boss() &&
+            once(prev(boss_hp_1())) != 17 && boss_hp_1() == 17 && //check for boss spawn
+            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200 || //check for boss death
+            toxic_pools_boss() &&
+            once(prev(boss_hp_2())) != 17 && boss_hp_2() == 17 &&
+            prev(boss_hp_2()) < 200 && boss_hp_2() >= 200 ||
+            toxic_pools_boss() &&
+            once(prev(boss_hp_3())) != 17 && boss_hp_3() == 17 &&
+            prev(boss_hp_3()) < 200 && boss_hp_3() >= 200 ||
+            toxic_pools_boss() &&
+            once(prev(boss_hp_4())) != 17 && boss_hp_4() == 17 &&
+            prev(boss_hp_4()) < 200 && boss_hp_4() >= 200 ||
+            once(toxic_pools_boss()) && bonus_cage_1() //progression fallback
+        )
+)
+
+achievement(
+    title = "Sizzling Quills",
+    description = "Collect your first Emerald in Lava Powerhouse",
+    id = 400632,
+    badge = "458987",
+    points = 2,
+    trigger =
+        demo_detection() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 1
+)
+
+achievement(
+    title = "Steam Powered Stone",
+    description = "Collect two Emeralds in Lava Powerhouse",
+    id = 400633,
+    badge = "484922",
+    points = 2,
+    trigger =
+        demo_detection() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 2
+)
+
+achievement(
+    title = "Throttling the Powerhouse",
+    description = "Collect all Emeralds in Lava Powerhouse and unlock the Boss room",
+    id = 400634,
+    badge = "484923",
+    points = 2,
+    trigger =
+        demo_detection() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 3
+)
+
+// God please forgive me for this shitass code omg
+achievement(
+    title = "Two Heads Are Weaker Than One",
+    description = "Clear Lava Powerhouse on Normal Difficulty with Default Continues",
+    id = 400613,
+    badge = "458988",
+    points = 10,
+    type="progression",
+    trigger = 
+            demo_detection() && 
+            difficulty_check() &&
+            continues_check() &&
+            cheat_detection() &&
+            never(lava_powerhouse()) && 
+            never(demo1_active()) &&
+            never(demo2_active()) &&
+              (
+                (lava_powerhouse_boss() && 
+                once(prev(boss_hp_6()) != 10 && boss_hp_6() == 10) &&
+                once(prev(boss_hp_5()) != 10 && boss_hp_5() == 10) &&
+                once(prev(boss_hp_6()) < 11 && boss_hp_6() >= 11) &&
+                once(prev(boss_hp_5()) < 11 && boss_hp_5() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_6()) != 10 && boss_hp_6() == 10) &&
+                once(prev(boss_hp_2()) != 10 && boss_hp_2() == 10) &&
+                once(prev(boss_hp_6()) < 11 && boss_hp_6() >= 11) &&
+                once(prev(boss_hp_2()) < 11 && boss_hp_2() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_5()) != 10 && boss_hp_5() == 10) &&
+                once(prev(boss_hp_2()) != 10 && boss_hp_2() == 10) &&
+                once(prev(boss_hp_5()) < 11 && boss_hp_5() >= 11) &&
+                once(prev(boss_hp_2()) < 11 && boss_hp_2() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_6()) != 10 && boss_hp_6() == 10) &&
+                once(prev(boss_hp_3()) != 10 && boss_hp_3() == 10) &&
+                once(prev(boss_hp_6()) < 11 && boss_hp_6() >= 11) &&
+                once(prev(boss_hp_3()) < 11 && boss_hp_3() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_5()) != 10 && boss_hp_5() == 10) &&
+                once(prev(boss_hp_3()) != 10 && boss_hp_3() == 10) &&
+                once(prev(boss_hp_5()) < 11 && boss_hp_5() >= 11) &&
+                once(prev(boss_hp_3()) < 11 && boss_hp_3() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_2()) != 10 && boss_hp_2() == 10) &&
+                once(prev(boss_hp_3()) != 10 && boss_hp_3() == 10) &&
+                once(prev(boss_hp_2()) < 11 && boss_hp_2() >= 11) &&
+                once(prev(boss_hp_3()) < 11 && boss_hp_3() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_5()) != 10 && boss_hp_5() == 10) &&
+                once(prev(boss_hp_1()) != 10 && boss_hp_1() == 10) &&
+                once(prev(boss_hp_5()) < 11 && boss_hp_5() >= 11) &&
+                once(prev(boss_hp_1()) < 11 && boss_hp_1() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_2()) != 10 && boss_hp_2() == 10) &&
+                once(prev(boss_hp_1()) != 10 && boss_hp_1() == 10) &&
+                once(prev(boss_hp_2()) < 11 && boss_hp_2() >= 11) &&
+                once(prev(boss_hp_1()) < 11 && boss_hp_1() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_6()) != 10 && boss_hp_6() == 10) &&
+                once(prev(boss_hp_1()) != 10 && boss_hp_1() == 10) &&
+                once(prev(boss_hp_6()) < 11 && boss_hp_6() >= 11) &&
+                once(prev(boss_hp_1()) < 11 && boss_hp_1() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_3()) != 10 && boss_hp_3() == 10) &&
+                once(prev(boss_hp_1()) != 10 && boss_hp_1() == 10) &&
+                once(prev(boss_hp_3()) < 11 && boss_hp_3() >= 11) &&
+                once(prev(boss_hp_1()) < 11 && boss_hp_1() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_4()) != 10 && boss_hp_4() == 10) &&
+                once(prev(boss_hp_1()) != 10 && boss_hp_1() == 10) &&
+                once(prev(boss_hp_4()) < 11 && boss_hp_4() >= 11) &&
+                once(prev(boss_hp_1()) < 11 && boss_hp_1() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_4()) != 10 && boss_hp_4() == 10) &&
+                once(prev(boss_hp_6()) != 10 && boss_hp_6() == 10) &&
+                once(prev(boss_hp_4()) < 11 && boss_hp_4() >= 11) &&
+                once(prev(boss_hp_6()) < 11 && boss_hp_6() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_4()) != 10 && boss_hp_4() == 10) &&
+                once(prev(boss_hp_2()) != 10 && boss_hp_2() == 10) &&
+                once(prev(boss_hp_4()) < 11 && boss_hp_4() >= 11) &&
+                once(prev(boss_hp_2()) < 11 && boss_hp_2() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_4()) != 10 && boss_hp_4() == 10) &&
+                once(prev(boss_hp_3()) != 10 && boss_hp_3() == 10) &&
+                once(prev(boss_hp_4()) < 11 && boss_hp_4() >= 11) &&
+                once(prev(boss_hp_3()) < 11 && boss_hp_3() >= 11)) ||
+               (lava_powerhouse_boss() &&
+                once(prev(boss_hp_4()) != 10 && boss_hp_4() == 10) &&
+                once(prev(boss_hp_5()) != 10 && boss_hp_5() == 10) &&
+                once(prev(boss_hp_4()) < 11 && boss_hp_4() >= 11) &&
+                once(prev(boss_hp_5()) < 11 && boss_hp_5() >= 11)) ||
+               (once(lava_powerhouse_boss()) && bonus_cage_2())
+               )
+)
+
+achievement(
+    title = "Flipper Focus",
+    description = "Collect your first Emerald in The Machine",
+    id = 400635,
+    badge = "458989",
+    points = 2,
+    trigger =
+            demo_detection() &&
+            cheat_detection() &&
+            the_machine() &&
+            chaos_emerald() == 4
+)
+
+achievement(
+    title = "Pardon My Slide!",
+    description = "Collect two Emeralds in The Machine",
+    id = 400636,
+    badge = "484924",
+    points = 2,
+    trigger = 
+            demo_detection() &&
+            cheat_detection() &&
+            the_machine() &&
+            chaos_emerald() == 5
+)
+
+achievement(
+    title = "It's All Part of the Processor",
+    description = "Collect three Emeralds in The Machine",
+    id = 400637, 
+    badge = "484925",
+    points = 2,
+    trigger = 
+            demo_detection() &&
+            cheat_detection() &&
+            the_machine() &&
+            chaos_emerald() == 6
+)
+
+achievement(
+    title = "Piston Perfect",
+    description = "Collect four Emeralds in The Machine",
+    id = 400638,
+    badge = "484926",
+    points = 2,
+    trigger = 
+            demo_detection() &&
+            cheat_detection() &&
+            the_machine() &&
+            chaos_emerald() == 7
+)
+
+achievement(
+    title = "Spin Against The Machine",
+    description = "Collect all Emeralds in The Machine and unlock the Boss room",
+    id = 400639,
+    badge = "484927",
+    points = 2,
+    trigger = 
+            demo_detection() &&
+            cheat_detection() &&
+            the_machine() && 
+            chaos_emerald() == 8
+)
+
+achievement(
+    title = "A Poorly Oiled Machine",
+    description = "Clear The Machine on Normal Difficulty with Default Continues",
+    id = 400645, 
+    badge = "458990",
+    points = 10,
+    type="progression",
+    trigger = 
+            demo_detection() &&
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && 
+            never(the_machine()) && 
+            never(demo1_active()) &&
+            never(demo2_active()) &&
+              (
+                (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_1()) == 0 &&
+                machine_hp_1() == 1), repeated(5, prev(machine_hp_2()) == 0 &&
+                machine_hp_2() == 1)
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_1()) == 0 &&
+                machine_hp_1() == 1), repeated(5, prev(machine_hp_3()) == 0 && 
+                machine_hp_3() == 1)
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_3()) == 0 && 
+                machine_hp_3() == 1), repeated(5, prev(machine_hp_4()) == 0 && 
+                machine_hp_4() == 1)
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_4()) == 0 && 
+                machine_hp_4() == 1), repeated(5, prev(machine_hp_1()) == 0 && 
+                machine_hp_1() == 1)
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_5()) == 0 && 
+                machine_hp_5() == 1), repeated(5, prev(byte(0x000E98)) == 0 && //undocumented boss value oops
+                byte(0x000E98) == 1) 
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(byte(0x000CFE)) == 0 && 
+                byte(0x000CFE) == 1), repeated(5, prev(machine_hp_2()) == 0 && //i think my soul gave up here uh.. other boss value ig
+                machine_hp_2() == 1) 
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_4()) == 0 && 
+                machine_hp_4() == 1), repeated(5, prev(machine_hp_2()) == 0 && 
+                machine_hp_2() == 1)
+                )) ||
+               (the_machine_boss() &&
+                tally(10, repeated(5, prev(machine_hp_2()) == 0 &&
+                machine_hp_2() == 1), repeated(5, prev(machine_hp_3()) == 0 && 
+                machine_hp_3() == 1)
+                )) ||
+               (once(the_machine_boss()) && bonus_cage_3()))
+)
+
+achievement(
+    title = "Charbroiled Emerald",
+    description = "Collect your first Emerald in Final Showdown",
+    id = 400640, 
+    badge = "458991",
+    points = 2, 
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            chaos_emerald() == 4
+)
+
+achievement(
+    title = "Cracking Open a Hot One",
+    description = "Collect two Emeralds in Final Showdown",
+    id = 400641, 
+    badge = "484928",
+    points = 2,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            chaos_emerald() == 5
+)
+
+achievement(
+    title = "Hot Emerald Over Coals",
+    description = "Collect three Emeralds in Final Showdown",
+    id = 400642, 
+    badge = "484929",
+    points = 2,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            chaos_emerald() == 6
+)
+
+achievement(
+    title = "Gem of Great Magma-tude",
+    description = "Collect four Emeralds in Final Showdown",
+    id = 400643, 
+    badge = "484930",
+    points = 2,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            chaos_emerald() == 7
+)
+
+achievement(
+    title = "Ready for the Final Showdown",
+    description = "Collect all Emeralds in Final Showdown and unlock the Boss room",
+    id = 400644, 
+    badge = "484931",
+    points = 2,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            chaos_emerald() == 8
+)
+
+achievement(
+    title = "All In a Day's Workout!",
+    description = "Clear Final Showdown and deal the finishing blow on Dr. Robotnik on Normal Difficulty with Default Continues",
+    id = 400625, 
+    badge = "458992",
+    points = 25, 
+    type="win_condition",
+    trigger = 
+            demo_detection() && 
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && never(final_showdown()) &&
+              (
+                (final_showdown_boss() && 
+                once(prev(boss_hp_4()) != 32 && boss_hp_4() == 32) &&
+                prev(boss_hp_4()) < 124 && boss_hp_4() >= 124) ||
+               (final_showdown_boss() && 
+                once(prev(boss_hp_6()) != 32 && boss_hp_6() == 32) &&
+                prev(boss_hp_6()) < 124 && boss_hp_6() >= 124) ||
+               (final_showdown_boss() && 
+                once(prev(boss_hp_1()) == 32 && boss_hp_1() == 32) &&
+                prev(boss_hp_1()) < 124 && boss_hp_1() >= 124) ||
+               (game_clear())
+               )
+)
+
+achievement(
+    title = "The Art of Spinball",
+    description = "Clear the game without using a continue on Normal Difficulty with Default Continues",
+    id = 400624, 
+    badge = "459250", 
+    points = 25,
+    trigger = 
+            demo_detection() && 
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && 
+            never(cutscene()) &&
+              (
+                (unless(once(current_continues() < prev(current_continues()))) &&
+                trigger_when((current_continues() >= prev(current_continues()) && 
+                final_showdown_boss() && boss_hp_4() == 124))) ||
+               (unless(once(current_continues() < prev(current_continues()))) &&
+                trigger_when((current_continues() >= prev(current_continues()) && 
+                final_showdown_boss() && boss_hp_6() == 124))) ||
+               (unless(once(current_continues() < prev(current_continues()))) &&
+                trigger_when((current_continues() >= prev(current_continues()) && 
+                final_showdown_boss() && boss_hp_1() == 124))) ||
+                (unless(once(current_continues() < prev(current_continues()))) &&
+                trigger_when((current_continues() >= prev(current_continues()) && 
+                final_showdown_boss() && boss_hp_5() == 124))) ||
+                (unless(once(current_continues() < prev(current_continues()))) &&
+                trigger_when((current_continues() >= prev(current_continues()) && 
+                final_showdown_boss() && prev(!end_cutscene()) && end_cutscene())))
+                )
+)
+
+achievement(
+    title = "Hedgehog Spin-surance",
+    description = "Earn a continue in a Stage or Bonus Cage",
+    id = 400616, 
+    badge = "459251", 
+    points = 2,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            (
+            lava_powerhouse() || bonus()) && 
+            current_continues() > prev(current_continues()
+            )
+)
+
+achievement(
+    title = "No Thanks! I Hate Getting Wet!",
+    description = "Find the secret area in Toxic Pools and break open all the monitors",
+    id = 400614, 
+    badge = "458993",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            toxic_pools() && 
+            secret_1() && 
+            secret_2()
+)
+
+achievement(
+    title = "The Powerhouse's Secret",
+    description = "Find the secret area in Lava Powerhouse and break open all the monitors",
+    id = 400615, 
+    badge = "458994",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            lava_powerhouse() && 
+            secret_1() && 
+            secret_2() && 
+            secret_3()
+)
+
+achievement(
+    title = "Walls Are Just a Suggestion",
+    description = "Find the secret area in The Machine and break open all the monitors",
+    id = 400617, 
+    badge = "458995",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            the_machine() && 
+            secret_1() && 
+            secret_2()
+)
+
+achievement(
+    title = "A Mad Scientist's Mad Stash", 
+    description = "Find the secret area in Final Showdown and break open all the monitors",
+    id = 400618, 
+    badge = "458996",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            final_showdown() && 
+            secret_1() && 
+            secret_2()
+)
+
+achievement(
+    title = "Developer Secrets",
+    description = "Successfully enter the code from the secret message boxes",
+    id = 400619, 
+    badge = "459252",
+    points = 1,
+    trigger = 
+            message_box() && 
+            dev_secret()
+)
+
+achievement(
+    title = "Hidden Codes",
+    description = "Break open the secret message box in any stage after activating the secret message code in Sound Test",
+    id = 400620, 
+    badge = "459253",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            dev_secret() &&
+            (toxic_pools() || lava_powerhouse() || the_machine() || final_showdown()) &&
+            dev_message()
+)
+
+achievement(
+    title = "Spinball Player",
+    description = "Earn over 5 million points on Normal Difficulty with Default Continues",
+    id = 400621, 
+    badge = "459254",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && 
+            score_millions() >= 5
+)
+
+achievement(
+    title = "Spinball Star", 
+    description = "Earn over 15 million points on Normal Difficulty with Default Continues",
+    id = 400622, 
+    badge = "459255",
+    points = 10,
+    trigger = 
+            demo_detection() && 
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && 
+            score_millions() >= 21
+)
+
+achievement(
+    title = "Spinball Sweep",
+    description = "Earn over 25 million points on Normal Difficulty with Default Continues",
+    id = 400623, 
+    badge = "459256",
+    points = 10,
+    trigger = 
+            demo_detection() && 
+            difficulty_check() && 
+            continues_check() &&
+            cheat_detection() && 
+            score_millions() >= 37
+)
+
+achievement(
+    title = "Bonus Cage Master I",
+    description = "Successfully clear Bonus Cage 1 with at least 100 rings. Level skip code is allowed",
+    id = 400626, 
+    badge = "458997",
+    points = 10,
+    trigger = 
+            demo_detection() && 
+            !float_cheat_active() && 
+            bonus_cage_1() &&
+            bonus_ring() >= 1
+)
+
+achievement(
+    title = "Bonus Cage Master II",
+    description = "Successfully clear Bonus Cage 2 with at least 100 rings. Level skip code is allowed",
+    id = 400627, 
+    badge = "458998",
+    points = 10,
+    trigger = 
+            demo_detection() && 
+            !float_cheat_active() && 
+            bonus_cage_2() &&
+            bonus_ring() >= 1
+)
+
+achievement(
+    title = "Bonus Cage Master III", 
+    description = "Successfully clear Bonus Cage 3 with at least 100 rings. Level skip code is allowed",
+    id = 400628, 
+    badge = "458999",
+    points = 10,
+    trigger = 
+            demo_detection() && 
+            !float_cheat_active() && 
+            bonus_cage_3 &&
+            bonus_ring() >= 1
+)
+
+achievement(
+    title = "Don't Stop, Keep Spinning!",
+    description = "Earn an extra life from the score match after losing all your lives",
+    id = 400646, 
+    badge = "459257",
+    points = 5,
+    trigger = 
+            demo_detection() && 
+            cheat_detection() &&
+            prev(lives()) == 0 && lives() == 1
+)
+
+// Leaderboards
+
+leaderboard(
+    title = "High Score - Normal",
+    description = "Get the highest score on Normal difficulty!",
+    id = 102669, 
+    start  =
+            demo_detection() && 
+            cheat_detection() &&
+            difficulty_check() &&
+             ((game_clear()) ||
+              (player_status() == 1) ||
+              (player_status() == 255 && current_continues() == 0 && lives() == 0)),
+    cancel = 
+            ((difficulty_rpc() == 1) ||
+            (score_five_hundreds() == 0 && score_ten_thousands() == 0 && score_millions() == 0)),
+    submit = 
+            demo_detection() && 
+            cheat_detection() &&
+            difficulty_check() &&
+             ((game_clear()) ||
+              (player_status() == 1) ||
+              (player_status() == 255 && current_continues() == 0 && lives() == 0)),
+    value  = 
+            measured((bcd(score_five_hundreds()) * 100 + bcd(score_ten_thousands()) * 10000 + bcd(score_millions()) * 1000000)),
+    format = "VALUE"
+)
+
+leaderboard(
+    title = "High Score - Easy",
+    description = "Get the highest score on Easy difficulty!",
+    id = 102670, 
+    start  = 
+            demo_detection() && 
+            cheat_detection() &&
+            difficulty_rpc() == 1 &&
+             ((game_clear()) ||
+              (player_status() == 1) ||
+              (player_status() == 255 && current_continues() == 0 && lives() == 0)),
+    cancel = 
+            ((difficulty_check()) ||
+              (score_five_hundreds() == 0 && score_ten_thousands() == 0 && score_millions() == 0)),
+    submit = 
+            demo_detection() && 
+            cheat_detection() &&
+            difficulty_rpc() == 1 &&
+             ((game_clear()) ||
+              (player_status() == 1) ||
+              (player_status() == 255 && current_continues() == 0 && lives() == 0)),
+    value  = 
+            measured((bcd(score_five_hundreds()) * 100 + bcd(score_ten_thousands()) * 10000 + bcd(score_millions()) * 1000000)),
+    format = "VALUE"
+)
+
+// Rich Presence
 
 StageLookup = {
     0: "Sonic is in Toxic Pools",
@@ -267,503 +998,11 @@ DifficultyLookup = {
     1: "Easy",
 }
 
-achievement(
-    title = "Is This Safe To Touch?",
-    description = "Collect your first Emerald in Toxic Pools",
-    id = 400629, 
-    badge = "458985",
-    points = 2,
-    trigger = 
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        toxic_pools() &&
-        chaos_emerald() == 1
-)
-
-achievement(
-    title = "Pipe Cleaning",
-    description = "Collect two Emeralds in Toxic Pools",
-    id = 400630,
-    badge = "484920",
-    points = 2,
-    trigger =
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        toxic_pools() &&
-        chaos_emerald() == 2
-)
-
-achievement(
-    title = "Crashing The Toxic Pool Party",
-    description = "Collect all Emeralds in Toxic Pools and unlock the Boss room",
-    id = 400631,
-    badge = "484921",
-    points = 2,
-    trigger = 
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        toxic_pools() &&
-        chaos_emerald() == 3
-)
-
-achievement(
-    title = "Soak Ya Later, Egg Head!",
-    description = "Clear Toxic Pools on Normal Difficulty with Default Continues",
-    id = 400612,
-    badge = "458986",
-    points = 10,
-    type="progression",
-    trigger =
-        !demo1_active() &&
-        !demo2_active() &&
-        difficulty_check() &&
-        continues_check() &&
-        cheat_detection() &&
-        never(table() == 0) &&
-        never(demo1_active()) && // a bit redundant in hindsight
-        never(demo2_active()) &&
-        (
-            toxic_pools_boss() &&
-            once(prev(boss_hp_1())) != 17 && boss_hp_1() == 17 && //check for boss spawn
-            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200 || //check for boss death
-            toxic_pools_boss() &&
-            once(prev(boss_hp_2())) != 17 && boss_hp_2() == 17 &&
-            prev(boss_hp_2()) < 200 && boss_hp_2() >= 200 ||
-            toxic_pools_boss() &&
-            once(prev(boss_hp_3())) != 17 && boss_hp_3() == 17 &&
-            prev(boss_hp_3()) < 200 && boss_hp_3() >= 200 ||
-            toxic_pools_boss() &&
-            once(prev(boss_hp_4())) != 17 && boss_hp_4() == 17 &&
-            prev(boss_hp_4()) < 200 && boss_hp_4() >= 200 ||
-            once(toxic_pools_boss()) && bonus_cage_1() //progression fallback
-        )
-)
-
-achievement(
-    title = "Sizzling Quills",
-    description = "Collect your first Emerald in Lava Powerhouse",
-    id = 400632,
-    badge = "458987",
-    points = 2,
-    trigger =
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        lava_powerhouse() &&
-        chaos_emerald() == 1
-)
-
-achievement(
-    title = "Steam Powered Stone",
-    description = "Collect two Emeralds in Lava Powerhouse",
-    id = 400633,
-    badge = "484922",
-    points = 2,
-    trigger =
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        lava_powerhouse() &&
-        chaos_emerald() == 2
-)
-
-achievement(
-    title = "Throttling the Powerhouse",
-    description = "Collect all Emeralds in Lava Powerhouse and unlock the Boss room",
-    id = 400634,
-    badge = "484923",
-    points = 2,
-    trigger =
-        !demo1_active() &&
-        !demo2_active() &&
-        cheat_detection() &&
-        lava_powerhouse() &&
-        chaos_emerald() == 3
-)
-
-// God please forgive me for this shitass code omg
-achievement(
-    title = "Two Heads Are Weaker Than One", points = 10, type="progression",
-    description = "Clear Lava Powerhouse on Normal Difficulty with Default Continues",
-    id = 400613, badge = "458988", published = "2/22/2024 5:08:45 AM", modified = "5/29/2024 10:24:16 AM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && never(byte(0x000884) == 2) && never(DEMO1 == 1) &&
-              never(DEMO2 == 1) &&
-              ((byte(0x000884) == 3 && once(prev(byte(0x000BA1)) != 10 && byte(0x000BA1) == 10) &&
-                once(prev(byte(0x000D3B)) != 10 && byte(0x000D3B) == 10) &&
-                once(prev(byte(0x000BA1)) < 11 && byte(0x000BA1) >= 11) &&
-                once(prev(byte(0x000D3B)) < 11 && byte(0x000D3B) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000BA1)) != 10 && byte(0x000BA1) == 10) &&
-                once(prev(byte(0x000C97)) != 10 && byte(0x000C97) == 10) &&
-                once(prev(byte(0x000BA1)) < 11 && byte(0x000BA1) >= 11) &&
-                once(prev(byte(0x000C97)) < 11 && byte(0x000C97) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000D3B)) != 10 && byte(0x000D3B) == 10) &&
-                once(prev(byte(0x000C97)) != 10 && byte(0x000C97) == 10) &&
-                once(prev(byte(0x000D3B)) < 11 && byte(0x000D3B) >= 11) &&
-                once(prev(byte(0x000C97)) < 11 && byte(0x000C97) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000BA1)) != 10 && byte(0x000BA1) == 10) &&
-                once(prev(byte(0x000CE9)) != 10 && byte(0x000CE9) == 10) &&
-                once(prev(byte(0x000BA1)) < 11 && byte(0x000BA1) >= 11) &&
-                once(prev(byte(0x000CE9)) < 11 && byte(0x000CE9) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000D3B)) != 10 && byte(0x000D3B) == 10) &&
-                once(prev(byte(0x000CE9)) != 10 && byte(0x000CE9) == 10) &&
-                once(prev(byte(0x000D3B)) < 11 && byte(0x000D3B) >= 11) &&
-                once(prev(byte(0x000CE9)) < 11 && byte(0x000CE9) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C97)) != 10 && byte(0x000C97) == 10) &&
-                once(prev(byte(0x000CE9)) != 10 && byte(0x000CE9) == 10) &&
-                once(prev(byte(0x000C97)) < 11 && byte(0x000C97) >= 11) &&
-                once(prev(byte(0x000CE9)) < 11 && byte(0x000CE9) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000D3B)) != 10 && byte(0x000D3B) == 10) &&
-                once(prev(byte(0x000BF3)) != 10 && byte(0x000BF3) == 10) &&
-                once(prev(byte(0x000D3B)) < 11 && byte(0x000D3B) >= 11) &&
-                once(prev(byte(0x000BF3)) < 11 && byte(0x000BF3) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C97)) != 10 && byte(0x000C97) == 10) &&
-                once(prev(byte(0x000BF3)) != 10 && byte(0x000BF3) == 10) &&
-                once(prev(byte(0x000C97)) < 11 && byte(0x000C97) >= 11) &&
-                once(prev(byte(0x000BF3)) < 11 && byte(0x000BF3) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000BA1)) != 10 && byte(0x000BA1) == 10) &&
-                once(prev(byte(0x000BF3)) != 10 && byte(0x000BF3) == 10) &&
-                once(prev(byte(0x000BA1)) < 11 && byte(0x000BA1) >= 11) &&
-                once(prev(byte(0x000BF3)) < 11 && byte(0x000BF3) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000CE9)) != 10 && byte(0x000CE9) == 10) &&
-                once(prev(byte(0x000BF3)) != 10 && byte(0x000BF3) == 10) &&
-                once(prev(byte(0x000CE9)) < 11 && byte(0x000CE9) >= 11) &&
-                once(prev(byte(0x000BF3)) < 11 && byte(0x000BF3) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C45)) != 10 && byte(0x000C45) == 10) &&
-                once(prev(byte(0x000BF3)) != 10 && byte(0x000BF3) == 10) &&
-                once(prev(byte(0x000C45)) < 11 && byte(0x000C45) >= 11) &&
-                once(prev(byte(0x000BF3)) < 11 && byte(0x000BF3) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C45)) != 10 && byte(0x000C45) == 10) &&
-                once(prev(byte(0x000BA1)) != 10 && byte(0x000BA1) == 10) &&
-                once(prev(byte(0x000C45)) < 11 && byte(0x000C45) >= 11) &&
-                once(prev(byte(0x000BA1)) < 11 && byte(0x000BA1) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C45)) != 10 && byte(0x000C45) == 10) &&
-                once(prev(byte(0x000C97)) != 10 && byte(0x000C97) == 10) &&
-                once(prev(byte(0x000C45)) < 11 && byte(0x000C45) >= 11) &&
-                once(prev(byte(0x000C97)) < 11 && byte(0x000C97) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C45)) != 10 && byte(0x000C45) == 10) &&
-                once(prev(byte(0x000CE9)) != 10 && byte(0x000CE9) == 10) &&
-                once(prev(byte(0x000C45)) < 11 && byte(0x000C45) >= 11) &&
-                once(prev(byte(0x000CE9)) < 11 && byte(0x000CE9) >= 11)) ||
-               (byte(0x000884) == 3 && once(prev(byte(0x000C45)) != 10 && byte(0x000C45) == 10) &&
-                once(prev(byte(0x000D3B)) != 10 && byte(0x000D3B) == 10) &&
-                once(prev(byte(0x000C45)) < 11 && byte(0x000C45) >= 11) &&
-                once(prev(byte(0x000D3B)) < 11 && byte(0x000D3B) >= 11)) ||
-               (once(byte(0x000884) == 3) && LEVEL == 16))
-)
-
-achievement(
-    title = "Flipper Focus", points = 2,
-    description = "Collect your first Emerald in The Machine",
-    id = 400635, badge = "458989", published = "2/22/2024 5:08:55 AM", modified = "5/28/2024 7:37:30 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 2 && byte(0x001E98) == 4
-)
-
-achievement(
-    title = "Pardon My Slide!", points = 2,
-    description = "Collect two Emeralds in The Machine",
-    id = 400636, badge = "484924", published = "2/22/2024 5:08:56 AM", modified = "5/28/2024 7:37:30 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 2 && byte(0x001E98) == 5
-)
-
-achievement(
-    title = "It's All Part of the Processor", points = 2,
-    description = "Collect three Emeralds in The Machine",
-    id = 400637, badge = "484925", published = "2/22/2024 5:08:56 AM", modified = "5/28/2024 7:37:30 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 2 && byte(0x001E98) == 6
-)
-
-achievement(
-    title = "Piston Perfect", points = 2,
-    description = "Collect four Emeralds in The Machine",
-    id = 400638, badge = "484926", published = "2/22/2024 5:08:57 AM", modified = "5/28/2024 7:37:30 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 2 && byte(0x001E98) == 7
-)
-
-achievement(
-    title = "Spin Against The Machine", points = 2,
-    description = "Collect all Emeralds in The Machine and unlock the Boss room",
-    id = 400639, badge = "484927", published = "2/22/2024 5:08:57 AM", modified = "5/28/2024 7:37:31 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 2 && byte(0x001E98) == 8
-)
-
-achievement(
-    title = "A Poorly Oiled Machine", points = 10, type="progression",
-    description = "Clear The Machine on Normal Difficulty with Default Continues",
-    id = 400645, badge = "458990", published = "2/22/2024 5:09:00 AM", modified = "5/29/2024 10:24:17 AM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && never(byte(0x000884) == 4) && never(DEMO1 == 1) &&
-              never(DEMO2 == 1) &&
-              ((byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000DA2)) == 0 && byte(0x000DA2) == 1), repeated(5,
-                    prev(byte(0x000D50)) == 0 && byte(0x000D50) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000DA2)) == 0 && byte(0x000DA2) == 1), repeated(5,
-                    prev(byte(0x000E46)) == 0 && byte(0x000E46) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000E46)) == 0 && byte(0x000E46) == 1), repeated(5,
-                    prev(byte(0x000DF4)) == 0 && byte(0x000DF4) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000DF4)) == 0 && byte(0x000DF4) == 1), repeated(5,
-                    prev(byte(0x000DA2)) == 0 && byte(0x000DA2) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000EEA)) == 0 && byte(0x000EEA) == 1), repeated(5,
-                    prev(byte(0x000E98)) == 0 && byte(0x000E98) == 1) //why the fuck is the game using the chaos emerald value for the boss
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000CFE)) == 0 && byte(0x000CFE) == 1), repeated(5, //i think my soul gave up here uh.. other boss value ig
-                    prev(byte(0x000D50)) == 0 && byte(0x000D50) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000DF4)) == 0 && byte(0x000DF4) == 1), repeated(5,
-                    prev(byte(0x000D50)) == 0 && byte(0x000D50) == 1)
-                )) ||
-               (byte(0x000884) == 5 &&
-                tally(10, repeated(5, prev(byte(0x000D50)) == 0 && byte(0x000D50) == 1), repeated(5,
-                    prev(byte(0x000E46)) == 0 && byte(0x000E46) == 1)
-                )) ||
-               (once(byte(0x000884) == 5) && LEVEL == 32))
-)
-
-achievement(
-    title = "Charbroiled Emerald", points = 2,
-    description = "Collect your first Emerald in Final Showdown",
-    id = 400640, badge = "458991", published = "2/22/2024 5:08:57 AM", modified = "5/28/2024 7:37:39 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 4 && byte(0x001E98) == 4
-)
-
-achievement(
-    title = "Cracking Open a Hot One", points = 2,
-    description = "Collect two Emeralds in Final Showdown",
-    id = 400641, badge = "484928", published = "2/22/2024 5:08:58 AM", modified = "5/28/2024 7:37:39 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 4 && byte(0x001E98) == 5
-)
-
-achievement(
-    title = "Hot Emerald Over Coals", points = 2,
-    description = "Collect three Emeralds in Final Showdown",
-    id = 400642, badge = "484929", published = "2/22/2024 5:08:58 AM", modified = "5/28/2024 7:37:40 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 4 && byte(0x001E98) == 6
-)
-
-achievement(
-    title = "Gem of Great Magma-tude", points = 2,
-    description = "Collect four Emeralds in Final Showdown",
-    id = 400643, badge = "484930", published = "2/22/2024 5:08:59 AM", modified = "5/28/2024 7:37:40 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 4 && byte(0x001E98) == 7
-)
-
-achievement(
-    title = "Ready for the Final Showdown", points = 2,
-    description = "Collect all Emeralds in Final Showdown and unlock the Boss room",
-    id = 400644, badge = "484931", published = "2/22/2024 5:08:59 AM", modified = "5/28/2024 7:37:40 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 4 && byte(0x001E98) == 8
-)
-
-achievement(
-    title = "All In a Day's Workout!", points = 25, type="win_condition",
-    description = "Clear Final Showdown and deal the finishing blow on Dr. Robotnik on Normal Difficulty with Default Continues",
-    id = 400625, badge = "458992", published = "2/22/2024 5:08:51 AM", modified = "5/29/2024 9:58:01 AM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && never(byte(0x000884) == 6) &&
-              ((byte(0x000884) == 7 && once(prev(byte(0x000C45)) != 32 && byte(0x000C45) == 32) &&
-                prev(byte(0x000C45)) < 124 && byte(0x000C45) >= 124) ||
-               (byte(0x000884) == 7 && once(prev(byte(0x000BA1)) != 32 && byte(0x000BA1) == 32) &&
-                prev(byte(0x000BA1)) < 124 && byte(0x000BA1) >= 124) ||
-               (byte(0x000884) == 7 && once(prev(byte(0x000BF3)) == 32 && byte(0x000BF3) == 32) &&
-                prev(byte(0x000BF3)) < 124 && byte(0x000BF3) >= 124) ||
-               (byte(0x001E19) == 92))
-)
-
-achievement(
-    title = "The Art of Spinball", points = 25,
-    description = "Clear the game without using a continue on Normal Difficulty with Default Continues",
-    id = 400624, badge = "459250", published = "2/22/2024 5:08:50 AM", modified = "5/28/2024 7:37:41 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && never(byte(0x000884) == 8) &&
-              ((unless(once(byte(0x001A1B) < prev(byte(0x001A1B)))) &&
-                trigger_when((byte(0x001A1B) >= prev(byte(0x001A1B)) && byte(0x000884) == 7 && byte(0x000C45) == 124))) ||
-               (unless(once(byte(0x001A1B) < prev(byte(0x001A1B)))) &&
-                trigger_when((byte(0x001A1B) >= prev(byte(0x001A1B)) && byte(0x000884) == 7 && byte(0x000BA1) == 124))) ||
-               (unless(once(byte(0x001A1B) < prev(byte(0x001A1B)))) &&
-                trigger_when((byte(0x001A1B) >= prev(byte(0x001A1B)) && byte(0x000884) == 7 && byte(0x000BF3) == 124))) ||
-                (unless(once(byte(0x001A1B) < prev(byte(0x001A1B)))) &&
-                trigger_when((byte(0x001A1B) >= prev(byte(0x001A1B)) && byte(0x000884) == 7 && byte(0x000C45) == 124))))
-)
-
-achievement(
-    title = "Hedgehog Spin-surance", points = 2,
-    description = "Earn a continue in a Stage or Bonus Cage",
-    id = 400616, badge = "459251", published = "2/22/2024 5:08:46 AM", modified = "5/29/2024 4:59:40 AM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              (byte(0x000884) == 2 || byte(0x000884) == 10) && byte(0x001A1B) > prev(byte(0x001A1B))
-)
-
-achievement(
-    title = "No Thanks! I Hate Getting Wet!", points = 5,
-    description = "Find the secret area in Toxic Pools and break open all the monitors",
-    id = 400614, badge = "458993", published = "2/22/2024 5:08:46 AM", modified = "5/28/2024 7:37:48 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              byte(0x000884) == 0 && byte(0x0014B2) == 64 && byte(0x0014B3) == 64
-)
-
-achievement(
-    title = "The Powerhouse's Secret", points = 5,
-    description = "Find the secret area in Lava Powerhouse and break open all the monitors",
-    id = 400615, badge = "458994", published = "2/22/2024 5:08:46 AM", modified = "5/28/2024 7:37:48 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              byte(0x000884) == 2 && byte(0x0014B2) == 64 && byte(0x0014B3) == 64 && byte(0x0014B4) == 64
-)
-
-achievement(
-    title = "Walls Are Just a Suggestion", points = 5,
-    description = "Find the secret area in The Machine and break open all the monitors",
-    id = 400617, badge = "458995", published = "2/22/2024 5:08:47 AM", modified = "5/28/2024 7:37:49 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              byte(0x000884) == 4 && byte(0x0014B2) == 64 && byte(0x0014B3) == 64
-)
-
-achievement(
-    title = "A Mad Scientist's Mad Stash", points = 5,
-    description = "Find the secret area in Final Showdown and break open all the monitors",
-    id = 400618, badge = "458996", published = "2/22/2024 5:08:47 AM", modified = "5/28/2024 7:37:49 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              byte(0x000884) == 6 && byte(0x0014B2) == 64 && byte(0x0014B3) == 64
-)
-
-achievement(
-    title = "Developer Secrets", points = 1,
-    description = "Successfully enter the code from the secret message boxes",
-    id = 400619, badge = "459252", published = "2/22/2024 5:08:48 AM", modified = "5/28/2024 7:38:00 PM",
-    trigger = CODE == 1 && byte(0x001A45) == 32
-)
-
-achievement(
-    title = "Hidden Codes", points = 5,
-    description = "Break open the secret message box in any stage after activating the secret message code in Sound Test",
-    id = 400620, badge = "459253", published = "2/22/2024 5:08:49 AM", modified = "5/28/2024 7:38:00 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              byte(0x001A45) == 32 &&
-              (LEVEL == 0 || LEVEL == 1 || LEVEL == 2 || LEVEL == 4) &&
-              byte(0x001E19) == 79
-)
-
-achievement(
-    title = "Spinball Player", points = 5,
-    description = "Earn over 5 million points on Normal Difficulty with Default Continues",
-    id = 400621, badge = "459254", published = "2/22/2024 5:08:49 AM", modified = "5/28/2024 7:38:00 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && byte(0x001A18) >= 5
-)
-
-achievement(
-    title = "Spinball Star", points = 10,
-    description = "Earn over 15 million points on Normal Difficulty with Default Continues",
-    id = 400622, badge = "459255", published = "2/22/2024 5:08:49 AM", modified = "5/28/2024 7:38:01 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && byte(0x001A18) >= 21
-)
-
-achievement(
-    title = "Spinball Sweep", points = 10,
-    description = "Earn over 25 million points on Normal Difficulty with Default Continues",
-    id = 400623, badge = "459256", published = "2/22/2024 5:08:50 AM", modified = "5/28/2024 7:38:01 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && byte(0x001E97) == 0 && byte(0x001E96) == 5 &&
-              CODE != 6 && CODE != 8 && byte(0x001A18) >= 37
-)
-
-achievement(
-    title = "Bonus Cage Master I", points = 10,
-    description = "Successfully clear Bonus Cage 1 with at least 100 rings. Level skip code is allowed",
-    id = 400626, badge = "458997", published = "2/22/2024 5:08:51 AM", modified = "5/28/2024 7:38:06 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 8 && LEVEL == 8 &&
-              byte(0x001C30) >= 1
-)
-
-achievement(
-    title = "Bonus Cage Master II", points = 10,
-    description = "Successfully clear Bonus Cage 2 with at least 100 rings. Level skip code is allowed",
-    id = 400627, badge = "458998", published = "2/22/2024 5:08:52 AM", modified = "5/28/2024 7:38:06 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 8 && LEVEL == 16 &&
-              byte(0x001C30) >= 1
-)
-
-achievement(
-    title = "Bonus Cage Master III", points = 10,
-    description = "Successfully clear Bonus Cage 3 with at least 100 rings. Level skip code is allowed",
-    id = 400628, badge = "458999", published = "2/22/2024 5:08:52 AM", modified = "5/28/2024 7:38:07 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 8 && LEVEL == 32 &&
-              byte(0x001C30) >= 1
-)
-
-achievement(
-    title = "Don't Stop, Keep Spinning!", points = 5,
-    description = "Earn an extra life from the score match after losing all your lives",
-    id = 400646, badge = "459257", published = "2/22/2024 5:09:00 AM", modified = "5/28/2024 11:59:27 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              prev(byte(0x001A16)) == 0 && byte(0x001A16) == 1
-)
-
-leaderboard(
-    id = 102669, title = "High Score - Normal",
-    description = "Get the highest score on Normal difficulty!",
-    start  = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-             byte(0x001E97) == 0 &&
-             ((byte(0x001E19) == 92) ||
-              (byte(0x000A26) == 1) ||
-              (byte(0x000A26) == 255 && byte(0x001A1B) == 0 && byte(0x001A16) == 0)),
-    cancel = ((byte(0x001E97) == 1) ||
-              (byte(0x001A1A) == 0 && byte(0x001A19) == 0 && byte(0x001A18) == 0)),
-    submit = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-             byte(0x001E97) == 0 &&
-             ((byte(0x001E19) == 92) ||
-              (byte(0x000A26) == 1) ||
-              (byte(0x000A26) == 255 && byte(0x001A1B) == 0 && byte(0x001A16) == 0)),
-    value  = measured((bcd(byte(0x001A1A)) * 100 + bcd(byte(0x001A19)) * 10000 + bcd(byte(0x001A18)) * 1000000)),
-    format = "VALUE"
-)
-
-leaderboard(
-    id = 102670, title = "High Score - Easy",
-    description = "Get the highest score on Easy difficulty!",
-    start  = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-             byte(0x001E97) == 1 &&
-             ((byte(0x001E19) == 92) ||
-              (byte(0x000A26) == 1) ||
-              (byte(0x000A26) == 255 && byte(0x001A1B) == 0 && byte(0x001A16) == 0)),
-    cancel = ((byte(0x001E97) == 0) ||
-              (byte(0x001A1A) == 0 && byte(0x001A19) == 0 && byte(0x001A18) == 0)),
-    submit = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-             byte(0x001E97) == 1 &&
-             ((byte(0x001E19) == 92) ||
-              (byte(0x000A26) == 1) ||
-              (byte(0x000A26) == 255 && byte(0x001A1B) == 0 && byte(0x001A16) == 0)),
-    value  = measured((bcd(byte(0x001A1A)) * 100 + bcd(byte(0x001A19)) * 10000 + bcd(byte(0x001A18)) * 1000000)),
-    format = "VALUE"
-)
-
-rich_presence_conditional_display(word(0x001A51) == 1, "Demo Playing")
+rich_presence_conditional_display(demo1_active(), "Demo Playing")
 
 rich_presence_display("[{0}] {1} | 🔵: {2} | 💯: {3}",
-    rich_presence_lookup("Difficulty", word(0x001E97), DifficultyLookup),
-    rich_presence_lookup("Stage", word(0x000884), StageLookup),
-    rich_presence_lookup("Lives", word(0x001A16), LivesLookup),
-    rich_presence_value("Score", bcd(byte(0x001A18)) * 1000000 + bcd(byte(0x001A19)) * 10000 + bcd(byte(0x001A1A)) * 100)
+    rich_presence_lookup("Difficulty", difficulty_rpc(), DifficultyLookup),
+    rich_presence_lookup("Stage", table(), StageLookup),
+    rich_presence_lookup("Lives", lives(), LivesLookup),
+    rich_presence_value("Score", bcd(score_millions()) * 1000000 + bcd(score_ten_thousands()) * 10000 + bcd(score_five_hundreds()) * 100)
 )
