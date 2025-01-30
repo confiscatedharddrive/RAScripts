@@ -316,7 +316,7 @@ achievement(
     badge = "458986",
     points = 10,
     type="progression",
-    trigger = 
+    trigger =
         !demo1_active() &&
         !demo2_active() &&
         difficulty_check() &&
@@ -327,8 +327,8 @@ achievement(
         never(demo2_active()) &&
         (
             toxic_pools_boss() &&
-            once(prev(boss_hp_1())) != 17 && boss_hp_1() == 17 &&
-            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200 ||
+            once(prev(boss_hp_1())) != 17 && boss_hp_1() == 17 && //check for boss spawn
+            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200 || //check for boss death
             toxic_pools_boss() &&
             once(prev(boss_hp_2())) != 17 && boss_hp_2() == 17 &&
             prev(boss_hp_2()) < 200 && boss_hp_2() >= 200 ||
@@ -338,32 +338,50 @@ achievement(
             toxic_pools_boss() &&
             once(prev(boss_hp_4())) != 17 && boss_hp_4() == 17 &&
             prev(boss_hp_4()) < 200 && boss_hp_4() >= 200 ||
-            once(toxic_pools_boss()) && bonus_cage_1()
+            once(toxic_pools_boss()) && bonus_cage_1() //progression fallback
         )
 )
 
 achievement(
-    title = "Sizzling Quills", points = 2,
+    title = "Sizzling Quills",
     description = "Collect your first Emerald in Lava Powerhouse",
-    id = 400632, badge = "458987", published = "2/22/2024 5:08:54 AM", modified = "5/28/2024 7:37:13 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 1 && byte(0x001E98) == 1
+    id = 400632,
+    badge = "458987",
+    points = 2,
+    trigger =
+        !demo1_active() &&
+        !demo2_active() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 1
 )
 
 achievement(
-    title = "Steam Powered Stone", points = 2,
+    title = "Steam Powered Stone",
     description = "Collect two Emeralds in Lava Powerhouse",
-    id = 400633, badge = "484922", published = "2/22/2024 5:08:54 AM", modified = "5/28/2024 7:37:14 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 1 && byte(0x001E98) == 2
+    id = 400633,
+    badge = "484922",
+    points = 2,
+    trigger =
+        !demo1_active() &&
+        !demo2_active() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 2
 )
 
 achievement(
-    title = "Throttling the Powerhouse", points = 2,
+    title = "Throttling the Powerhouse",
     description = "Collect all Emeralds in Lava Powerhouse and unlock the Boss room",
-    id = 400634, badge = "484923", published = "2/22/2024 5:08:55 AM", modified = "5/28/2024 7:37:14 PM",
-    trigger = DEMO1 != 1 && DEMO2 != 1 && CODE != 6 && CODE != 8 &&
-              LEVEL == 1 && byte(0x001E98) == 3
+    id = 400634,
+    badge = "484923",
+    points = 2,
+    trigger =
+        !demo1_active() &&
+        !demo2_active() &&
+        cheat_detection() &&
+        lava_powerhouse() &&
+        chaos_emerald() == 3
 )
 
 // God please forgive me for this shitass code omg
