@@ -63,7 +63,7 @@ function player_status() => byte(0x000A26)
 function demo1_active() => byte(0x001A51) == 1
 function demo2_active() => byte(0x001A54) == 1
 function demo_detection() =>
-    unless(demo1_active()) ||
+    unless(demo1_active()) &&
     unless(demo2_active())
 
 // 0x1E97: [8-bit] Difficulty
@@ -89,7 +89,7 @@ function message_box() => byte (0x001A43) == 1
 function levelskip_cheat_active() => byte(0x001A43) == 6
 function float_cheat_active() => byte(0x001A43) == 8
 function cheat_detection() =>
-    unless(levelskip_cheat_active()) ||
+    unless(levelskip_cheat_active()) &&
     unless(float_cheat_active())
 
 // 0x1A45: [8-bit] Message Box Modifier
@@ -323,19 +323,19 @@ achievement(
         never(demo1_active()) && // a bit redundant in hindsight
         never(demo2_active()) &&
         (
-            toxic_pools_boss() &&
-            once(prev(boss_hp_1())) != 17 && boss_hp_1() == 17 && //check for boss spawn
-            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200 || //check for boss death
-            toxic_pools_boss() &&
-            once(prev(boss_hp_2())) != 17 && boss_hp_2() == 17 &&
-            prev(boss_hp_2()) < 200 && boss_hp_2() >= 200 ||
-            toxic_pools_boss() &&
-            once(prev(boss_hp_3())) != 17 && boss_hp_3() == 17 &&
-            prev(boss_hp_3()) < 200 && boss_hp_3() >= 200 ||
-            toxic_pools_boss() &&
-            once(prev(boss_hp_4())) != 17 && boss_hp_4() == 17 &&
-            prev(boss_hp_4()) < 200 && boss_hp_4() >= 200 ||
-            once(toxic_pools_boss()) && bonus_cage_1() //progression fallback
+            (toxic_pools_boss() &&
+            once(prev(boss_hp_1()) != 17 && boss_hp_1() == 17) && //check for boss spawn
+            prev(boss_hp_1()) < 200 && boss_hp_1() >= 200) || //check for boss death
+            (toxic_pools_boss() &&
+            once(prev(boss_hp_2()) != 17 && boss_hp_2() == 17) &&
+            prev(boss_hp_2()) < 200 && boss_hp_2() >= 200) ||
+            (toxic_pools_boss() &&
+            once(prev(boss_hp_3()) != 17 && boss_hp_3() == 17) &&
+            prev(boss_hp_3()) < 200 && boss_hp_3() >= 200) ||
+            (toxic_pools_boss() &&
+            once(prev(boss_hp_4()) != 17 && boss_hp_4() == 17) &&
+            prev(boss_hp_4()) < 200 && boss_hp_4() >= 200) ||
+            (once(toxic_pools_boss()) && bonus_cage_1()) //progression fallback
         )
 )
 
