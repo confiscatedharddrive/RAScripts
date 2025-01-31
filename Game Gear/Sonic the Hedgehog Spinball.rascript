@@ -107,8 +107,8 @@ function dev_secret() => byte(0x001A45) == 32
 //         0x20: Bonus Cage 3
 //         0x04: Final Showdown/Level Splash Screen
 function bonus_cage_1() => byte(0x000B27) == 8
-function bonus_cage_2() => byte(0x000B27) == 10
-function bonus_cage_3() => byte(0x000B27) == 20
+function bonus_cage_2() => byte(0x000B27) == 16
+function bonus_cage_3() => byte(0x000B27) == 32
 
 // 0x1E98: [8-bit] Chaos Emerald Acquired
 //         [Toxic Pools & Lava Powerhouse]
