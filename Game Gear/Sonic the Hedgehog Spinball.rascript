@@ -894,7 +894,7 @@ achievement(
     trigger = 
             demo_detection() && 
             !float_cheat_active() && 
-            bonus_cage_3 &&
+            bonus_cage_3() &&
             bonus_ring() >= 1
 )
 
