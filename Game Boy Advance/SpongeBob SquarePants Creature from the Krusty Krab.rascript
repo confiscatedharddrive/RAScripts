@@ -7,8 +7,10 @@
 
 // 0x0062: [16-bit] Screen X axis scroll
 function respawn() => word(0x000062) == 0
+function stage_position_x() => word(0x000062)
 		
 // 0x0066: [16-bit] Screen Y axis scroll
+function stage_position_y() => word(0x000066)
 		
 // 0x012C: [8-bit] Last Menu Been In
 //         Updates according to screen ID but only for menus or if in the arcade. Stagnates well for RP data
@@ -67,14 +69,17 @@ function arcade_in_minigame() => byte(0x00012C) == 40
 //         0x57: Hurdles
 function diesel_dreaming_1() => byte(0x000158) == 48
 function diesel_dreaming_3() => byte(0x000158) == 50
+function starfishman_rescue_1() => byte(0x000158) == 52
 function starfishman_rescue_3() => byte(0x000158) == 54
 function starfishman_rescue_4() => byte(0x000158) == 55
+function supersized_patty_1() => byte(0x000158) == 56
 function supersized_patty_2() => byte(0x000158) == 57
 function supersized_patty_4() => byte(0x000158) == 59
 function alaskan_belly_2() => byte(0x000158) == 60
 function rocket_rodeo_3() => byte(0x000158) == 66
 function plankton_monster_2() => byte(0x000158) == 69
 function plankton_monster_4() => byte(0x000158) == 71
+function bikini_bottom_1() => byte(0x000158) == 72
 function bikini_bottom_4() => byte(0x000158) == 75
 function rooftop_rumble_1() => byte(0x000158) == 76
 function rooftop_rumble_3() => byte(0x000158) == 78
@@ -87,6 +92,7 @@ function target() => byte(0x000158) == 84
 function pit() => byte(0x000158) == 85
 function float() => byte(0x000158) == 86
 function hurdles() => byte(0x000158) == 87
+function stage_rpc() => byte(0x000158)
 		
 // 0x01F4: [8-bit] Language Select
 //         0x00: English
@@ -341,6 +347,8 @@ function usa_health_get() => bit4(0x00706C) > prev(bit4(0x00706C))
 function usa_invincibility_get() => bit5(0x00706C) > prev(bit5(0x00706C))
 function usa_poof() => bit3(0x00706C) > prev(bit3(0x00706C))
 function usa_speed_star_get() => bit7(0x00706C) > prev(bit7(0x00706C))
+function usa_speed_star() => bit7(0x00706C)
+function eur_scene() => byte(0x00706C)
 		
 // 0x707C: [EUR] [BitCount] Variable Collectible
 //         Bit 0: Patrick Extra Life
@@ -358,22 +366,22 @@ function eur_health_get() => bit4(0x00707C) > prev(bit4(0x00707C))
 function eur_invincibility_get() => bit5(0x00707C) > prev(bit5(0x00707C))
 function eur_poof() => bit3(0x00707C) > prev(bit3(0x00707C))
 function eur_speed_star_get() => bit7(0x00707C) > prev(bit7(0x00707C))
+function eur_speed_star() => bit7(0x00707C)
 		
 // 0x7274: [USA] [8-bit] Revenge of the Giant Plankton Monster 2 Bridge Pieces Destroyed
 //         Increments by 1 value for each part of the bridge broken by enemies, until 6, where it collapses.
+function usa_bridge_intact() => byte(0x007274) == 0
 		
 // 0x7284: [EUR] [8-bit] Revenge of the Giant Plankton Monster 2 Bridge Pieces Destroyed
 //         Increments by 1 value for each part of the bridge broken by enemies, until 6, where it collapses.
-		
-// 0x7C7D: [EUR] [8-bit] Car Speed
-//         0x05: Low Speed/Idling Vehicle
-//         0x06: High Speed
-//         0x07: Boost Pickup
-		
+function eur_bridge_intact() => byte(0x007284) == 0
+
 // 0x9828: [16-bit] Minigame Game Over
 //         0x0000 Indicates Game Over screen
+function game_over() => word(0x009828) == 0
 		
 // 0x9862: [8-bit] Plate Spinning/Worm Minigame Current Round
+function minigame_data_1() => byte(0x009862)
 		
 // 0x9876: [8-bit] Varying Minigame Indicators
 //         Updates depending on minigame. Value stagnates until another minigame is chosen or reset, regardless if value is used.
@@ -387,491 +395,1031 @@ function eur_speed_star_get() => bit7(0x00707C) > prev(bit7(0x00707C))
 //         0x02: Win Condition
 //         [Float Maze]
 //         Score (000x00)
+function minigame_data_2() => byte(0x009876)
+function float_score_hundreds() => byte(0x009876) * 100
 		
 // 0x988A: [8-bit] Float Maze Minigame Score (0000x0)
+function float_score_tens() => byte(0x00988A) * 10
 		
 // 0x989E: [8-bit] Float Maze Minigame Score (00000x)
+function float_score_ones() => byte(0x00989E) * 1
+function float_score() => float_score_ones() + float_score_tens() + float_score_hundreds()
 
 
 achievement(
-    title = "And the Winner Is... SpringBoob SquirePin!", points = 3, type="progression",
+    title = "And the Winner Is... SpringBoob SquirePin!",
     description = "Clear Diesel Dreaming",
-    id = 445557, badge = "515577", published = "7/5/2024 4:06:51 AM", modified = "1/5/2025 10:40:15 PM",
-    trigger = ((usa() && prev(usa_screen()) == 83 && usa_screen() == 124) ||
-               (europe() && prev(eur_screen()) == 83 && eur_screen() == 124))
+    id = 445557, 
+    badge = "515577",
+    points = 3, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 83 && usa_screen() == 124) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 83 && eur_screen() == 124)
+               )
 )
 
 achievement(
-    title = "Fear Not, Starfish-Man Is Here", points = 3, type="progression",
+    title = "Fear Not, Starfish-Man Is Here",
     description = "Clear Starfish-Man to the Rescue",
-    id = 445558, badge = "515578", published = "7/5/2024 4:06:51 AM", modified = "1/5/2025 10:40:16 PM",
-    trigger = ((usa() && prev(usa_screen()) == 89 && usa_screen() == 125) ||
-               (europe() && prev(eur_screen()) == 89 && eur_screen() == 125))
-)
-
-achievement(
-    title = "I Can Deny It No Longer! I Am Small...", points = 3, type="progression",
-    description = "Clear Super-Sized Patty",
-    id = 445559, badge = "515579", published = "7/5/2024 4:06:52 AM", modified = "1/5/2025 10:40:17 PM",
-    trigger = ((usa() && prev(usa_screen()) == 94 && usa_screen() == 126) ||
-               (europe() && prev(eur_screen()) == 94 && eur_screen() == 126))
-)
-
-achievement(
-    title = "It's Big, Scary, and Pink!", points = 5, type="progression",
-    description = "Clear Alaskan Belly Trouble",
-    id = 445560, badge = "515580", published = "7/5/2024 4:06:52 AM", modified = "1/5/2025 10:40:17 PM",
-    trigger = ((usa() && prev(usa_screen()) == 98 && usa_screen() == 127) ||
-               (europe() && prev(eur_screen()) == 98 && eur_screen() == 127))
-)
-
-achievement(
-    title = "Hey, Who Turned the Heavy Back On?", points = 5, type="progression",
-    description = "Clear Rocket Rodeo",
-    id = 445561, badge = "515581", published = "7/5/2024 4:06:53 AM", modified = "1/5/2025 10:40:18 PM",
-    trigger = ((usa() && prev(usa_screen()) == 101 && usa_screen() == 128) ||
-               (europe() && prev(eur_screen()) == 101 && eur_screen() == 128))
-)
-
-achievement(
-    title = "I Will Destroy All of You!", points = 5, type="progression",
-    description = "Clear Revenge of the Giant Plankton Monster",
-    id = 445562, badge = "515582", published = "7/5/2024 4:06:53 AM", modified = "1/5/2025 10:40:19 PM",
-    trigger = ((usa() && prev(usa_screen()) == 108 && usa_screen() == 129) ||
-               (europe() && prev(eur_screen()) == 108 && eur_screen() == 129))
-)
-
-achievement(
-    title = "The SquarePants Flyer Mark III", points = 5, type="progression",
-    description = "Clear It Came From Bikini Bottom",
-    id = 445563, badge = "515583", published = "7/5/2024 4:06:54 AM", modified = "1/5/2025 10:40:20 PM",
-    trigger = ((usa() && prev(usa_screen()) == 111 && usa_screen() == 130) ||
-               (europe() && prev(eur_screen()) == 111 && eur_screen() == 130))
-)
-
-achievement(
-    title = "I Am Starfish-Man: Defender of Bikini Bottom!", points = 10, type="progression",
-    description = "Clear Rooftop Rumble",
-    id = 445564, badge = "515584", published = "7/5/2024 4:06:54 AM", modified = "1/5/2025 10:40:20 PM",
-    trigger = rooftop_rumble_3() &&
-              ((usa() && prev(!usa_boss_kill()) && usa_boss_kill()) ||
-               (europe() && prev(!eur_boss_kill()) && eur_boss_kill()))
-)
-
-achievement(
-    title = "Jelly Patty", points = 10, type="win_condition",
-    description = "Clear Hypnotic Highway with SpongeBob",
-    id = 445565, badge = "515585", published = "7/5/2024 4:06:55 AM", modified = "1/10/2025 10:34:54 PM",
-    trigger = sponge_racer() && hypnotic_highway() &&
-              ((usa() && prev(usa_screen()) == 38 && usa_screen() == 120) ||
-               (europe() && prev(eur_screen()) == 38 && eur_screen() == 120))
-)
-
-achievement(
-    title = "Krabby Double Deluxe", points = 10, type="win_condition",
-    description = "Clear Hypnotic Highway as Patrick",
-    id = 445566, badge = "515586", published = "7/5/2024 4:06:55 AM", modified = "1/10/2025 10:34:54 PM",
-    trigger = pat_racer() && hypnotic_highway() &&
-              ((usa() && prev(usa_screen()) == 37 && usa_screen() == 118) ||
-               (europe() && prev(eur_screen()) == 37 && eur_screen() == 118))
-)
-
-achievement(
-    title = "Chum Patty", points = 10, type="win_condition",
-    description = "Clear Hypnotic Highway as Plankton",
-    id = 445567, badge = "515587", published = "7/5/2024 4:06:56 AM", modified = "1/10/2025 10:34:55 PM",
-    trigger = plank_racer() && hypnotic_highway() &&
-              ((usa() && prev(usa_screen()) == 39 && usa_screen() == 119) ||
-               (europe() && prev(eur_screen()) == 39 && eur_screen() == 119))
-)
-
-achievement(
-    title = "\"M\" For Mini", points = 1,
-    description = "Collect an extra life for the first time",
-    id = 445588, badge = "521853", published = "7/5/2024 4:07:06 AM", modified = "1/10/2025 11:35:54 PM",
-    trigger = (
-                (usa() && usa_in_stage() && (usa_1up_get())) ||
-                (europe() && europe_in_stage() && (eur_1up_get()))
+    id = 445558, 
+    badge = "515578",
+    points = 3, 
+    type="progression",
+    trigger =
+            (
+                (usa() && 
+                prev(usa_screen()) == 89 && usa_screen() == 125) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 89 && eur_screen() == 125)
                 )
 )
 
 achievement(
-    title = "Thank You, Sir Cecil", points = 1,
+    title = "I Can Deny It No Longer! I Am Small...",
+    description = "Clear Super-Sized Patty",
+    id = 445559, 
+    badge = "515579",
+    points = 3, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 94 && usa_screen() == 126) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 94 && eur_screen() == 126)
+                )
+)
+
+achievement(
+    title = "It's Big, Scary, and Pink!",
+    description = "Clear Alaskan Belly Trouble",
+    id = 445560, 
+    badge = "515580",
+    points = 5, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 98 && usa_screen() == 127) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 98 && eur_screen() == 127)
+                )
+)
+
+achievement(
+    title = "Hey, Who Turned the Heavy Back On?",
+    description = "Clear Rocket Rodeo",
+    id = 445561, 
+    badge = "515581", 
+    points = 5, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 101 && usa_screen() == 128) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 101 && eur_screen() == 128)
+                )
+)
+
+achievement(
+    title = "I Will Destroy All of You!",
+    description = "Clear Revenge of the Giant Plankton Monster",
+    id = 445562, 
+    badge = "515582",
+    points = 5, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 108 && usa_screen() == 129) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 108 && eur_screen() == 129)
+                )
+)
+
+achievement(
+    title = "The SquarePants Flyer Mark III",
+    description = "Clear It Came From Bikini Bottom",
+    id = 445563, 
+    badge = "515583",
+    points = 5, 
+    type="progression",
+    trigger = 
+            (
+                (usa() && 
+                prev(usa_screen()) == 111 && usa_screen() == 130) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 111 && eur_screen() == 130)
+                )
+)
+
+achievement(
+    title = "I Am Starfish-Man: Defender of Bikini Bottom!",
+    description = "Clear Rooftop Rumble",
+    id = 445564, 
+    badge = "515584",
+    points = 10, 
+    type="progression",
+    trigger = 
+            rooftop_rumble_3() &&
+              (
+                (usa() && 
+                prev(!usa_boss_kill()) && usa_boss_kill()) ||
+                
+                (europe() && 
+                prev(!eur_boss_kill()) && eur_boss_kill())
+                )
+)
+
+achievement(
+    title = "Jelly Patty",
+    description = "Clear Hypnotic Highway with SpongeBob",
+    id = 445565, 
+    badge = "515585",
+    points = 10, 
+    type="win_condition",
+    trigger = 
+            sponge_racer() && 
+            hypnotic_highway() &&
+              (
+                (usa() && 
+                prev(usa_screen()) == 38 && usa_screen() == 120) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 38 && eur_screen() == 120)
+                )
+)
+
+achievement(
+    title = "Krabby Double Deluxe",
+    description = "Clear Hypnotic Highway as Patrick",
+    id = 445566, 
+    badge = "515586",
+    points = 10, 
+    type="win_condition",
+    trigger = 
+            pat_racer() && hypnotic_highway() &&
+              (
+                (usa() && 
+                prev(usa_screen()) == 37 && usa_screen() == 118) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 37 && eur_screen() == 118)
+                )
+)
+
+achievement(
+    title = "Chum Patty",
+    description = "Clear Hypnotic Highway as Plankton",
+    id = 445567, 
+    badge = "515587", 
+    points = 10, 
+    type="win_condition",
+    trigger = 
+            plank_racer() && hypnotic_highway() &&
+              (
+                (usa() && 
+                prev(usa_screen()) == 39 && usa_screen() == 119) ||
+                
+                (europe() && 
+                prev(eur_screen()) == 39 && eur_screen() == 119)
+                )
+)
+
+achievement(
+    title = "\"M\" For Mini",
+    description = "Collect an extra life for the first time",
+    id = 445588, 
+    badge = "521853",
+    points = 1,
+    trigger = 
+            (
+                (usa() && 
+                usa_in_stage() && usa_1up_get()) ||
+                
+                (europe() && 
+                europe_in_stage() && eur_1up_get())
+                )
+)
+
+achievement(
+    title = "Thank You, Sir Cecil", 
     description = "Collect a Snooze Wink for the first time",
-    id = 445595, badge = "521854", published = "7/5/2024 4:07:09 AM", modified = "1/10/2025 11:35:54 PM",
-    trigger = ((usa() && usa_in_stage() && usa_health_get()) ||
-               (europe() && europe_in_stage() && eur_health_get()))
+    id = 445595, 
+    badge = "521854",
+    points = 1,
+    trigger = 
+            (
+                (usa() && 
+                usa_in_stage() && usa_health_get()) ||
+                
+                (europe() && 
+                europe_in_stage() && eur_health_get())
+                )
 )
 
 achievement(
-    title = "I Feel All Tingly Inside", points = 1,
+    title = "I Feel All Tingly Inside", 
     description = "Collect an Electric Cloud for the first time",
-    id = 445589, badge = "522532", published = "7/5/2024 4:07:06 AM", modified = "1/11/2025 12:22:22 AM",
-    trigger = ((usa() && usa_in_stage() && usa_invincibility_get()) ||
-               (europe() && europe_in_stage() && eur_invincibility_get()))
+    id = 445589, 
+    badge = "522532",
+    points = 1,
+    trigger = 
+            (
+                (usa() && 
+                usa_in_stage() && usa_invincibility_get()) ||
+                
+                (europe() && 
+                europe_in_stage() && eur_invincibility_get())
+                )
 )
 
 achievement(
-    title = "Where Did Everybody Go?!", points = 1,
+    title = "Where Did Everybody Go?!", 
     description = "Collect a Moon Shower for the first time",
-    id = 445590, badge = "521855", published = "7/5/2024 4:07:07 AM", modified = "1/11/2025 12:22:22 AM",
-    trigger = ((usa() && usa_in_stage() && usa_poof()) ||
-               (europe() && europe_in_stage() && eur_poof()))
+    id = 445590, 
+    badge = "521855",
+    points = 1,
+    trigger = 
+            (
+                (usa() && 
+                usa_in_stage() && usa_poof()) ||
+                
+                (europe() && 
+                europe_in_stage() && eur_poof())
+                )
 )
 
 achievement(
-    title = "Maximum Overdrive", points = 1,
+    title = "Maximum Overdrive", 
     description = "Collect a Speed Star for the first time",
-    id = 445591, badge = "521856", published = "7/5/2024 4:07:07 AM", modified = "1/10/2025 11:35:55 PM",
-    trigger = ((usa() && usa_in_stage() && usa_speed_star_get()) ||
-               (europe() && europe_in_stage() && eur_speed_star_get()))
+    id = 445591, 
+    badge = "521856",
+    points = 1,
+    trigger = 
+            (
+                (usa() && 
+                usa_in_stage() && usa_speed_star_get()) ||
+                
+                (europe() && 
+                europe_in_stage() && eur_speed_star_get())
+                )
 )
 
 achievement(
-    title = "Are You Ready To Be a Winner?", points = 3,
+    title = "Are You Ready To Be a Winner?",
     description = "Unlock all mini-games by finding each hidden arcade cabinet",
-    id = 445573, badge = "521857", published = "7/5/2024 4:06:59 AM", modified = "1/14/2025 3:11:19 AM",
-    trigger = ((prev(!minigames_unlocked()) && usa() && measured(minigames_unlocked()) &&
+    id = 445573, 
+    badge = "521857",
+    points = 3,
+    trigger = 
+            (
+                (prev(!minigames_unlocked()) && usa() && 
+                measured(minigames_unlocked()) &&
                 prev(usa_in_stage()) &&
-                (prev(byte(0x000158)) == 48 || prev(byte(0x000158)) == 52 || prev(byte(0x000158)) == 56 ||
-                    prev(byte(0x000158)) == 60 || prev(byte(0x000158)) == 66 || prev(byte(0x000158)) == 71 ||
-                    prev(byte(0x000158)) == 72 || prev(byte(0x000158)) == 76
+                    (prev(diesel_dreaming_1()) || prev(starfishman_rescue_1()) || prev(supersized_patty_1()) ||
+                    prev(alaskan_belly_2()) || prev(rocket_rodeo_3()) || prev(plankton_monster_4()) ||
+                    prev(bikini_bottom_1()) || prev(rooftop_rumble_1())
                 )) ||
-               (prev(!minigames_unlocked()) && europe() && measured(minigames_unlocked()) &&
+                
+                (prev(!minigames_unlocked()) && europe() && 
+                measured(minigames_unlocked()) &&
                 prev(europe_in_stage()) &&
-                (prev(byte(0x000158)) == 48 || prev(byte(0x000158)) == 52 || prev(byte(0x000158)) == 56 ||
-                    prev(byte(0x000158)) == 60 || prev(byte(0x000158)) == 66 || prev(byte(0x000158)) == 71 ||
-                    prev(byte(0x000158)) == 72 || prev(byte(0x000158)) == 76
-                )))
+                    (prev(diesel_dreaming_1()) || prev(starfishman_rescue_1()) || prev(supersized_patty_1()) ||
+                    prev(alaskan_belly_2()) || prev(rocket_rodeo_3()) || prev(plankton_monster_4()) ||
+                    prev(bikini_bottom_1()) || prev(rooftop_rumble_1())
+                ))
+                )
 )
 
 achievement(
-    title = "I'd Say... I'm Already Halfway There!", points = 5,
+    title = "I'd Say... I'm Already Halfway There!",
     description = "Pick up 8 Speed Stars in part 1 of Diesel Dreaming without respawning",
-    id = 445571, badge = "523992", published = "7/5/2024 4:06:58 AM", modified = "1/8/2025 3:43:42 AM",
-    trigger = diesel_dreaming_1() && never((usa() && usa_screen() != 4)) &&
-              never((europe() && eur_screen() != 4)) &&
-              ((usa_in_stage() && usa_screen() == 4 &&
-                measured(tally(8, repeated(8, usa() && prev(bit7(0x00706C)) == 0 && bit7(0x00706C) == 1))) &&
-                never((usa_save() == 1 && lives_1() < prev(lives_1()))) &&
-                never((usa_save() == 2 && lives_2() < prev(lives_2()))) &&
-                never((usa_save() == 3 && lives_3() < prev(lives_3())))) ||
-               (europe_in_stage() && eur_screen() == 4 &&
-                measured(tally(8, repeated(8, europe() && prev(bit7(0x00707C)) == 0 && bit7(0x00707C) == 1))) &&
-                never((eur_save() == 1 && lives_3() < prev(lives_3()))) &&
-                never((eur_save() == 2 && lives_4() < prev(lives_4()))) &&
-                never((eur_save() == 3 && lives_5() < prev(lives_5())))))
+    id = 445571, 
+    badge = "523992",
+    points = 5,
+    trigger = 
+            diesel_dreaming_1() && 
+            never((usa() && usa_screen() != 4)) &&
+            never((europe() && eur_screen() != 4)) &&
+                (
+                    (usa_in_stage() && 
+                    usa_screen() == 4 &&
+                    measured(tally(8, repeated(8, usa() && 
+                    prev(usa_speed_star()) == 0 && usa_speed_star() == 1))) &&
+                        never((usa_save() == 1 && lives_1() < prev(lives_1()))) &&
+                        never((usa_save() == 2 && lives_2() < prev(lives_2()))) &&
+                        never((usa_save() == 3 && lives_3() < prev(lives_3())))) ||
+                    
+                    (europe_in_stage() && 
+                    eur_screen() == 4 &&
+                    measured(tally(8, repeated(8, europe() && 
+                    prev(eur_speed_star()) == 0 && eur_speed_star() == 1))) &&
+                        never((eur_save() == 1 && lives_3() < prev(lives_3()))) &&
+                        never((eur_save() == 2 && lives_4() < prev(lives_4()))) &&
+                        never((eur_save() == 3 && lives_5() < prev(lives_5()))))
+                    )
 )
 
 achievement(
-    title = "SpongeBob GreasePants", points = 10,
+    title = "SpongeBob GreasePants",
     description = "Repair the car in part 3 of Diesel Dreaming without getting damaged and before letting the car reach critical condition",
-    id = 445568, badge = "523993", published = "7/5/2024 4:06:56 AM", modified = "1/8/2025 3:43:42 AM",
-    trigger = diesel_dreaming_3() && never(word(0x000062) == 0) && never((usa() && usa_car_critical())) &&
-              never((europe() && eur_car_critical())) && never((usa() && usa_screen() != 6)) &&
-              never((europe() && eur_screen() != 6)) &&
-              ((usa() && usa_in_stage() && usa_screen() == 6 &&
-                unless(once(usa_health() < prev(usa_health()))) && prev(!usa_all_car_parts()) &&
-                trigger_when(usa_all_car_parts())) ||
-               (europe() && europe_in_stage() && eur_screen() == 6 &&
-                unless(once(eur_health() < prev(eur_health()))) && prev(!eur_all_car_parts()) &&
-                trigger_when(eur_all_car_parts())))
+    id = 445568, 
+    badge = "523993",
+    points = 10,
+    trigger = 
+            diesel_dreaming_3() && 
+            never(respawn()) && 
+            never((usa() && usa_car_critical())) &&
+            never((europe() && eur_car_critical())) && 
+            never((usa() && usa_screen() != 6)) &&
+            never((europe() && eur_screen() != 6)) &&
+                (
+                    (usa() && 
+                    usa_in_stage() && 
+                    usa_screen() == 6 &&
+                    unless(once(usa_health() < prev(usa_health()))) && 
+                    prev(!usa_all_car_parts()) &&
+                    trigger_when(usa_all_car_parts())) ||
+                    
+                    (europe() && 
+                    europe_in_stage() &&
+                    eur_screen() == 6 &&
+                    unless(once(eur_health() < prev(eur_health()))) && 
+                    prev(!eur_all_car_parts()) &&
+                    trigger_when(eur_all_car_parts()))
+                )
 )
 
 achievement(
-    title = "I Told You Taking The Train Was a Mistake", points = 10,
+    title = "I Told You Taking The Train Was a Mistake", 
     description = "Clear part 3 of Starfish-Man to the Rescue in under 1:05",
-    id = 445584, badge = "516845", published = "7/5/2024 4:07:04 AM", modified = "1/8/2025 3:43:42 AM",
-    trigger = starfishman_rescue_3() && never(word(0x000062) == 0) &&
-              ((usa() && unless(usa_pause()) &&
-                unless(repeated(3900, once(usa_on_train()) && usa_in_stage() && starfishman_rescue_3())) &&
-                prev(usa_screen()) == 10 && trigger_when(usa_screen() == 87)) ||
-               (europe() && unless(eur_pause()) &&
-                unless(repeated(3900, once(eur_on_train()) && europe_in_stage() && starfishman_rescue_3())) &&
-                prev(eur_screen()) == 10 && trigger_when(eur_screen() == 87)))
+    id = 445584, 
+    badge = "516845",
+    points = 10,
+    trigger = 
+            starfishman_rescue_3() && 
+            never(respawn()) &&
+                (
+                    (usa() && 
+                    unless(usa_pause()) &&
+                    unless(repeated(3900, once(usa_on_train()) && 
+                    usa_in_stage() && starfishman_rescue_3())) &&
+                    prev(usa_screen()) == 10 && 
+                    trigger_when(usa_screen() == 87)) ||
+                    
+                    (europe() && 
+                    unless(eur_pause()) &&
+                    unless(repeated(3900, once(eur_on_train()) && 
+                    europe_in_stage() && starfishman_rescue_3())) &&
+                    prev(eur_screen()) == 10 && 
+                    trigger_when(eur_screen() == 87))
+                    )
 )
 
 achievement(
-    title = "The Fiery Fist O' Pain", points = 10,
+    title = "The Fiery Fist O' Pain", 
     description = "Defeat Dreaded Patrick in part 4 of Starfish-Man to the Rescue without taking damage",
-    id = 445583, badge = "523994", published = "7/5/2024 4:07:03 AM", modified = "1/8/2025 3:43:43 AM",
-    trigger = starfishman_rescue_4() && never((usa() && usa_screen() != 11)) &&
-              never((europe() && eur_screen() != 11)) &&
-              ((usa() && usa_in_stage() && usa_screen() == 11 &&
-                unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && prev(!usa_boss_kill()) &&
-                trigger_when(usa_boss_kill())) ||
-               (europe() && europe_in_stage() && eur_screen() == 11 &&
-                unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && prev(!eur_boss_kill()) &&
-                trigger_when(eur_boss_kill())))
+    id = 445583, 
+    badge = "523994",
+    points = 10,
+    trigger = 
+            starfishman_rescue_4() &&
+            never(respawn()) &&
+            never((usa() && 
+            usa_screen() != 11)) &&
+            never((europe() && 
+            eur_screen() != 11)) &&
+                (
+                    (usa() && 
+                    usa_in_stage() && 
+                    usa_screen() == 11 &&
+                    unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && 
+                    prev(!usa_boss_kill()) &&
+                    trigger_when(usa_boss_kill())) ||
+                    
+                    (europe() && 
+                    europe_in_stage() && 
+                    eur_screen() == 11 &&
+                    unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && 
+                    prev(!eur_boss_kill()) &&
+                    trigger_when(eur_boss_kill()))
+                    )
 )
 
 achievement(
-    title = "The Sticky Goo of My Own Folley", points = 10,
+    title = "The Sticky Goo of My Own Folley", 
     description = "Clear part 2 of Super-Sized Patty without touching the goo",
-    id = 445569, badge = "531807", published = "7/5/2024 4:06:57 AM", modified = "1/8/2025 3:43:43 AM",
-    trigger = supersized_patty_2() && never(word(0x000062) == 0) && never((usa() && usa_screen() != 13)) &&
-              never((europe() && eur_screen() != 13)) &&
-              ((usa() && usa_screen() == 13 && usa_in_stage() && unless(once(goo())) &&
-                prev(word(0x000062)) != 4208 && trigger_when(word(0x000062) == 4208)) ||
-               (europe() && eur_screen() == 13 && europe_in_stage() && unless(once(goo())) &&
-                prev(word(0x000062)) != 4208 && trigger_when(word(0x000062) == 4208)))
+    id = 445569, 
+    badge = "531807",
+    points = 10,
+    trigger = 
+            supersized_patty_2() && 
+            never(respawn()) && 
+            never((usa() && 
+            usa_screen() != 13)) &&
+            never((europe() && 
+            eur_screen() != 13)) &&
+                (
+                    (usa() && 
+                    usa_screen() == 13 && 
+                    usa_in_stage() && 
+                    unless(once(goo())) &&
+                    prev(stage_position_x()) != 4208 && 
+                    trigger_when(stage_position_x() == 4208)) ||
+                    
+                    (europe() && 
+                    eur_screen() == 13 && 
+                    europe_in_stage() && 
+                    unless(once(goo())) &&
+                    prev(stage_position_x()) != 4208 && 
+                    trigger_when(stage_position_x() == 4208))
+                    )
 )
 
 achievement(
-    title = "A Little Too Much Sauce", points = 10,
+    title = "A Little Too Much Sauce",
     description = "Defeat the Patty boss in part 4 of Super-Sized Patty without getting hit",
-    id = 445570, badge = "531808", published = "7/5/2024 4:06:57 AM", modified = "1/8/2025 3:43:44 AM",
-    trigger = supersized_patty_4() && never(word(0x000062) == 0) && never((usa() && usa_screen() != 15)) &&
-              never((europe() && eur_screen() != 15)) &&
-              ((usa() && usa_in_stage() && usa_screen() == 15 &&
-                unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && prev(!usa_boss_kill()) &&
-                trigger_when(usa_boss_kill())) ||
-               (europe() && europe_in_stage() && eur_screen() == 15 &&
-                unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && prev(!eur_boss_kill()) &&
-                trigger_when(eur_boss_kill())))
+    id = 445570, 
+    badge = "531808",
+    points = 10,
+    trigger = 
+            supersized_patty_4() && 
+            never(respawn()) && 
+            never((usa() && 
+            usa_screen() != 15)) &&
+            never((europe() && 
+            eur_screen() != 15)) &&
+                (
+                    (usa() && 
+                    usa_in_stage() && 
+                    usa_screen() == 15 &&
+                    unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && 
+                    prev(!usa_boss_kill()) &&
+                    trigger_when(usa_boss_kill())) ||
+               
+                    (europe() && 
+                    europe_in_stage() && 
+                    eur_screen() == 15 &&
+                    unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && 
+                    prev(!eur_boss_kill()) &&
+                    trigger_when(eur_boss_kill()))
+                    )
 )
 
 achievement(
-    title = "One Very Long Digestive Tract Later...", points = 10,
+    title = "One Very Long Digestive Tract Later...", 
     description = "Make your way through part 2 of Alaskan Belly Trouble in under 1:40",
-    id = 445593, badge = "516846", published = "7/5/2024 4:07:08 AM", modified = "1/8/2025 3:43:44 AM",
-    trigger = alaskan_belly_2() && never(word(0x000062) == 0) && never((usa() && usa_screen() != 17)) &&
-              never((europe() && eur_screen() != 17)) &&
-              ((usa() && usa_in_stage() && usa_screen() == 17 && unless(usa_pause()) &&
-                unless(repeated(6000, once(usa_in_stage() && word(0x000066) == 767) && alaskan_belly_2())) &&
-                prev(word(0x000062)) != 5344 && trigger_when(word(0x000062) == 5344)) ||
-               (europe() && europe_in_stage() && eur_screen() == 17 && unless(eur_pause()) &&
-                unless(repeated(6000, once(europe_in_stage() && word(0x000066) == 767) && alaskan_belly_2())) &&
-                prev(word(0x000062)) != 5344 && trigger_when(word(0x000062) == 5344)))
+    id = 445593, 
+    badge = "516846",
+    points = 10,
+    trigger = 
+            alaskan_belly_2() && 
+            never(respawn()) && 
+            never((usa() && 
+            usa_screen() != 17)) &&
+            never((europe() && 
+            eur_screen() != 17)) &&
+                (
+                    (usa() && 
+                    usa_in_stage() && 
+                    usa_screen() == 17 && 
+                    unless(usa_pause()) &&
+                    unless(repeated(6000, once(usa_in_stage() && 
+                    stage_position_y() == 767) && 
+                    alaskan_belly_2())) &&
+                    prev(stage_position_x()) != 5344 && 
+                    trigger_when(stage_position_x() == 5344)) ||
+                    
+                    (europe() && 
+                    europe_in_stage() && 
+                    eur_screen() == 17 && 
+                    unless(eur_pause()) &&
+                    unless(repeated(6000, once(europe_in_stage() && 
+                    stage_position_y() == 767) && 
+                    alaskan_belly_2())) &&
+                    prev(stage_position_x()) != 5344 && 
+                    trigger_when(stage_position_x() == 5344))
+                    )
 )
 
 achievement(
-    title = "82 Kilometers Later...", points = 10,
+    title = "82 Kilometers Later...",
     description = "Clear part 3 of Rocket Rodeo without getting hit and without shooting a laser",
-    id = 445592, badge = "535050", published = "7/5/2024 4:07:08 AM", modified = "1/8/2025 3:43:45 AM",
-    trigger = rocket_rodeo_3() && never(word(0x000062) == 0) &&
-              ((usa() &&
-                unless(once(usa_screen() == 23 && usa_in_rocket() && prev(!usa_laser()) && usa_laser())) &&
-                unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && prev(usa_screen()) == 23 &&
-                trigger_when(usa_screen() == 100)) ||
-               (europe() &&
-                unless(once(eur_screen() == 23 && europe_in_rocket() && prev(!eur_laser()) && eur_laser())) &&
-                unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && prev(eur_screen()) == 23 &&
-                trigger_when(eur_screen() == 100)))
+    id = 445592, 
+    badge = "535050",
+    points = 10,
+    trigger = 
+            rocket_rodeo_3() && 
+            never(respawn()) &&
+                (
+                    (usa() &&
+                    unless(once(usa_screen() == 23 && 
+                    usa_in_rocket() && 
+                    prev(!usa_laser()) && usa_laser())) &&
+                    unless(once(usa_health() > 0 && usa_health() < prev(usa_health()))) && 
+                    prev(usa_screen()) == 23 &&
+                    trigger_when(usa_screen() == 100)) ||
+                    
+                    (europe() &&
+                    unless(once(eur_screen() == 23 && 
+                    europe_in_rocket() && 
+                    prev(!eur_laser()) && eur_laser())) &&
+                    unless(once(eur_health() > 0 && eur_health() < prev(eur_health()))) && 
+                    prev(eur_screen()) == 23 &&
+                    trigger_when(eur_screen() == 100))
+                    )
 )
 
 achievement(
-    title = "I See You... Zap!", points = 10,
+    title = "I See You... Zap!",
     description = "Clear part 2 of Revenge of the Giant Plankton Monster without letting any part of the bridge crumble",
-    id = 445572, badge = "535051", published = "7/5/2024 4:06:58 AM", modified = "1/10/2025 11:16:06 PM",
-    trigger = plankton_monster_2() &&
-              ((usa() && usa_screen() == 26 && usa_in_stage() && byte(0x007274) == 0 &&
-                prev(word(0x000066)) != 800 && trigger_when(word(0x000066) == 800)) ||
-               (europe() && eur_screen() == 26 && europe_in_stage() && byte(0x007284) == 0 &&
-                prev(word(0x000066)) != 800 && trigger_when(word(0x000066) == 800)))
+    id = 445572, 
+    badge = "535051",
+    points = 10,
+    trigger = 
+            plankton_monster_2() &&
+                (
+                    (usa() && 
+                    usa_screen() == 26 && 
+                    usa_in_stage() && 
+                    usa_bridge_intact() &&
+                    prev(stage_position_y()) != 800 && 
+                    trigger_when(stage_position_y() == 800)) ||
+                    
+                    (europe() && 
+                    eur_screen() == 26 && 
+                    europe_in_stage() && 
+                    eur_bridge_intact() &&
+                    prev(stage_position_y()) != 800 && 
+                    trigger_when(stage_position_y() == 800))
+                    )
 )
 
 achievement(
-    title = "I'll Have To Sue For My Pain and Suffering", points = 5,
+    title = "I'll Have To Sue For My Pain and Suffering", 
     description = "Make it to the end of the final part of Revenge of the Giant Plankton Monster while surviving at least 10 attacks from Bikini Bottomites",
-    id = 445594, badge = "535052", published = "7/5/2024 4:07:08 AM", modified = "1/8/2025 3:43:46 AM",
-    trigger = plankton_monster_4() && never(word(0x000062) == 0) && never((usa() && usa_screen() != 28)) &&
-              never((europe() && eur_screen() != 28)) &&
-              ((usa() && usa_screen() == 28 && usa_in_stage() && prev(word(0x000066)) != 2307 &&
-                word(0x000066) == 2307 && repeated(10, usa_health() > 0 && usa_health() < prev(usa_health()))) ||
-               (europe() && eur_screen() == 28 && europe_in_stage() && prev(word(0x000066)) != 2307 &&
-                word(0x000066) == 2307 && repeated(10, eur_health() > 0 && eur_health() < prev(eur_health()))))
+    id = 445594, 
+    badge = "535052",
+    points = 5,
+    trigger = 
+            plankton_monster_4() && 
+            never(respawn()) && 
+            never((usa() && 
+            usa_screen() != 28)) &&
+            never((europe() && 
+            eur_screen() != 28)) &&
+                (
+                    (usa() && 
+                    usa_screen() == 28 && 
+                    usa_in_stage() && 
+                    prev(stage_position_y()) != 2307 &&
+                    stage_position_y() == 2307 && 
+                    repeated(10, usa_health() > 0 && usa_health() < prev(usa_health()))) ||
+               
+                    (europe() && 
+                    eur_screen() == 28 && 
+                    europe_in_stage() && 
+                    prev(stage_position_y()) != 2307 &&
+                    stage_position_y() == 2307 && 
+                    repeated(10, eur_health() > 0 && eur_health() < prev(eur_health())))
+                    )
 )
 
 achievement(
-    title = "Local Nutcase Tries to Fly", points = 10,
+    title = "Local Nutcase Tries to Fly",
     description = "Clear part 3 of It Came From Bikini Bottom without getting hit from Plankton's laser eye",
-    id = 445574, badge = "535053", published = "7/5/2024 4:06:59 AM", modified = "1/8/2025 3:43:46 AM",
-    trigger = never((usa() && usa_screen() != 133 && word(0x000062) == 0)) &&
-              never((europe() && eur_screen() != 133 && word(0x000062) == 0)) && prev(byte(0x000158)) == 74 &&
-              trigger_when(bikini_bottom_4()) &&
-              ((usa() && prev(usa_in_stage()) &&
-                unless(once(usa_screen() == 31 && usa_health() > 0 && usa_health() < prev(usa_health())))) ||
-               (europe() && prev(europe_in_stage()) &&
-                unless(once(eur_screen() == 31 && eur_health() > 0 && eur_health() < prev(eur_health())))))
+    id = 445574, 
+    badge = "535053",
+    points = 10,
+    trigger = 
+            never((usa() && 
+            usa_screen() != 133 && 
+            respawn())) &&
+            never((europe() && 
+            eur_screen() != 133 && 
+            respawn())) && 
+            prev(byte(0x000158)) == 74 &&
+            trigger_when(bikini_bottom_4()) &&
+                (
+                    (usa() && 
+                    prev(usa_in_stage()) &&
+                    unless(once(usa_screen() == 31 && 
+                    usa_health() > 0 && usa_health() < prev(usa_health())))) ||
+                    
+                    (europe() && 
+                    prev(europe_in_stage()) &&
+                    unless(once(eur_screen() == 31 && eur_health() > 0 && 
+                    eur_health() < prev(eur_health()))))
+                    )
 )
 
 achievement(
-    title = "I Am Confident In My Abilities To Successfully Succeed", points = 10,
+    title = "I Am Confident In My Abilities To Successfully Succeed", 
     description = "Defeat Plankton in the final part of It Came From Bikini Bottom without taking damage",
-    id = 445596, badge = "535054", published = "7/5/2024 4:07:09 AM", modified = "1/8/2025 3:43:46 AM",
-    trigger = bikini_bottom_4() && never((usa() && usa_screen() != 32)) &&
-              never((europe() && eur_screen() != 32)) &&
-              ((usa() && usa_screen() == 32 && usa_in_stage() &&
-                unless(once(usa_health() < prev(usa_health()))) && prev(!usa_boss_kill()) &&
-                trigger_when(usa_boss_kill())) ||
-               (europe() && eur_screen() == 32 && europe_in_stage() &&
-                unless(once(eur_health() < prev(eur_health()))) && prev(!eur_boss_kill()) &&
-                trigger_when(eur_boss_kill())))
+    id = 445596, 
+    badge = "535054",
+    points = 10,
+    trigger = 
+            bikini_bottom_4() && 
+            never(respawn()) && 
+            never((usa() && 
+            usa_screen() != 32)) &&
+            never((europe() && 
+            eur_screen() != 32)) &&
+                (
+                    (usa() && 
+                    usa_screen() == 32 && 
+                    usa_in_stage() &&
+                    unless(once(usa_health() < prev(usa_health()))) && 
+                    prev(!usa_boss_kill()) &&
+                    trigger_when(usa_boss_kill())) ||
+                    
+                    (europe() && 
+                    eur_screen() == 32 && 
+                    europe_in_stage() &&
+                    unless(once(eur_health() < prev(eur_health()))) && 
+                    prev(!eur_boss_kill()) &&
+                    trigger_when(eur_boss_kill()))
+                    )
 )
 
 achievement(
-    title = "Don't Touch Me, I'm Sterile!", points = 10,
+    title = "Don't Touch Me, I'm Sterile!",
     description = "Get through part 1 of Rooftop Rumble without gliding and without getting clinged on by Plankton's minions",
-    id = 445586, badge = "535055", published = "7/5/2024 4:07:05 AM", modified = "1/8/2025 3:43:47 AM",
-    trigger = rooftop_rumble_1() && never((usa() && usa_screen() != 33)) &&
-              never((europe() && eur_screen() != 33)) &&
-              ((usa() && usa_screen() == 33 && usa_in_stage() && unless(once(usa_cling())) &&
-                unless(once(usa_gliding())) && prev(word(0x000062)) < 7728 && trigger_when(word(0x000062) >= 7728)) ||
-               (europe() && eur_screen() == 33 && europe_in_stage() && unless(once(eur_cling())) &&
-                unless(once(eur_gliding())) && prev(word(0x000062)) < 7728 && trigger_when(word(0x000062) >= 7728)))
+    id = 445586, 
+    badge = "535055",
+    points = 10,
+    trigger = 
+            rooftop_rumble_1() && 
+            never((usa() && 
+            usa_screen() != 33)) &&
+            never((europe() && 
+            eur_screen() != 33)) &&
+                (
+                    (usa() && 
+                    usa_screen() == 33 && 
+                    usa_in_stage() && 
+                    unless(once(usa_cling())) &&
+                    unless(once(usa_gliding())) && 
+                    prev(stage_position_x()) < 7728 && 
+                    trigger_when(stage_position_x() >= 7728)) ||
+                    
+                    (europe() && 
+                    eur_screen() == 33 && 
+                    europe_in_stage() && 
+                    unless(once(eur_cling())) &&
+                    unless(once(eur_gliding())) && 
+                    prev(stage_position_x()) < 7728 && 
+                    trigger_when(stage_position_x() >= 7728))
+                    )
 )
 
 achievement(
-    title = "Laser Equipped Bermuda Shorts", points = 25,
+    title = "Laser Equipped Bermuda Shorts", 
     description = "Defeat Plankton in the final part of Rooftop Rumble without shooting your laser more than 150 times",
-    id = 445585, badge = "535269", published = "7/5/2024 4:07:04 AM", modified = "1/8/2025 3:43:47 AM",
-    trigger = rooftop_rumble_3() && never((usa() && usa_screen() != 35)) &&
-              never((europe() && eur_screen() != 35)) && never(word(0x000062) == 0) &&
-              ((usa() && usa_screen() == 35 && usa_in_final_boss() && prev(!usa_boss_kill()) &&
-                trigger_when(usa_boss_kill()) &&
-                unless(repeated(150, usa_in_final_boss() && prev(!usa_laser()) && usa_laser()))) ||
-               (europe() && eur_screen() == 35 && europe_in_final_boss() && prev(!eur_boss_kill()) &&
-                trigger_when(eur_boss_kill()) &&
-                unless(repeated(150, europe_in_final_boss() && prev(!eur_laser()) && eur_laser()))))
+    id = 445585, 
+    badge = "535269",
+    points = 25,
+    trigger = 
+            rooftop_rumble_3() && 
+            never((usa() && 
+            usa_screen() != 35)) &&
+            never((europe() && 
+            eur_screen() != 35)) && 
+            never(respawn()) &&
+                (
+                    (usa() && 
+                    usa_screen() == 35 && 
+                    usa_in_final_boss() && 
+                    prev(!usa_boss_kill()) &&
+                    trigger_when(usa_boss_kill()) &&
+                    unless(repeated(150, usa_in_final_boss() && 
+                    prev(!usa_laser()) && usa_laser()))) ||
+                    
+                    (europe() && 
+                    eur_screen() == 35 && 
+                    europe_in_final_boss() && 
+                    prev(!eur_boss_kill()) &&
+                    trigger_when(eur_boss_kill()) &&
+                    unless(repeated(150, europe_in_final_boss() && 
+                    prev(!eur_laser()) && eur_laser())))
+                    )
 )
 
 achievement(
-    title = "Hands At Ten and Two and Finally... Floor It!", points = 10,
+    title = "Hands At Ten and Two and Finally... Floor It!",
     description = "Clear Hypnotic Highway as any character while taking the fastest route possible",
-    id = 445587, badge = "535270", published = "7/5/2024 4:07:05 AM", modified = "1/8/2025 3:43:48 AM",
-    trigger = hypnotic_highway() && never((usa() && usa_screen() == 131)) &&
-              never((europe() && eur_screen() == 131)) &&
-              ((europe() && sponge_racer() && prev(eur_screen()) == 38 &&
-                trigger_when(eur_screen() == 120) && unless(once(time_left() == 328))) ||
-               (europe() && pat_racer() && prev(eur_screen()) == 37 &&
-                trigger_when(eur_screen() == 118) && unless(once(time_left() == 628))) ||
-               (europe() && plank_racer() && prev(eur_screen()) == 39 &&
-                trigger_when(eur_screen() == 119) && unless(once(time_left() == 208))) ||
-               (usa() && sponge_racer() && prev(usa_screen()) == 38 &&
-                trigger_when(usa_screen() == 120) && unless(once(time_left() == 328))) ||
-               (usa() && pat_racer() && prev(usa_screen()) == 37 &&
-                trigger_when(usa_screen() == 118) && unless(once(time_left() == 628))) ||
-               (usa() && plank_racer() && prev(usa_screen()) == 39 &&
-                trigger_when(usa_screen() == 119) && unless(once(time_left() == 208))))
+    id = 445587, 
+    badge = "535270",
+    points = 10,
+    trigger = 
+            hypnotic_highway() && 
+            never((usa() && 
+            usa_screen() == 131)) &&
+            never((europe() && 
+            eur_screen() == 131)) &&
+                (
+                    (usa() && 
+                    sponge_racer() && 
+                    prev(usa_screen()) == 38 &&
+                    trigger_when(usa_screen() == 120) && 
+                    unless(once(time_left() == 328))) ||
+                    (usa() && 
+                    pat_racer() && 
+                    prev(usa_screen()) == 37 &&
+                    trigger_when(usa_screen() == 118) && 
+                    unless(once(time_left() == 628))) ||
+                    (usa() && 
+                    plank_racer() && 
+                    prev(usa_screen()) == 39 &&
+                    trigger_when(usa_screen() == 119) && 
+                    unless(once(time_left() == 208)))
+                    
+                    (europe() && 
+                    sponge_racer() && 
+                    prev(eur_screen()) == 38 &&
+                    trigger_when(eur_screen() == 120) && 
+                    unless(once(time_left() == 328))) ||
+                    (europe() && 
+                    pat_racer() && 
+                    prev(eur_screen()) == 37 &&
+                    trigger_when(eur_screen() == 118) && 
+                    unless(once(time_left() == 628))) ||
+                    (europe() && 
+                    plank_racer() && 
+                    prev(eur_screen()) == 39 &&
+                    trigger_when(eur_screen() == 119) && 
+                    unless(once(time_left() == 208))) ||
+               )
 )
 
 achievement(
-    title = "F.U.N.", points = 4,
+    title = "F.U.N.", 
     description = "Win the Trampoline minigame",
-    id = 445575, badge = "535271", published = "7/5/2024 4:07:00 AM", modified = "1/10/2025 10:58:15 PM",
-    trigger = trampoline() && prev(byte(0x009876)) == 0 && byte(0x009876) == 1
+    id = 445575, 
+    badge = "535271",
+    points = 4,
+    trigger = 
+            trampoline() && 
+            prev(minigame_data_2()) == 0 && 
+            minigame_data_2() == 1
 )
 
 achievement(
-    title = "All That Glitters", points = 4,
+    title = "All That Glitters", 
     description = "Reach Round 6 of the Spatula Toss minigame",
-    id = 445576, badge = "535272", published = "7/5/2024 4:07:00 AM", modified = "1/10/2025 10:58:16 PM",
-    trigger = target() && prev(byte(0x009876)) == 5 && byte(0x009876) == 6
+    id = 445576, 
+    badge = "535272",
+    points = 4,
+    trigger = 
+            target() && 
+            prev(minigame_data_2()) == 5 && 
+            minigame_data_2() == 6
 )
 
 achievement(
-    title = "Rock Bottom", points = 5,
+    title = "Rock Bottom", 
     description = "Score 50 points or more in the Pit minigame",
-    id = 445577, badge = "535273", published = "7/5/2024 4:07:00 AM", modified = "1/10/2025 10:58:16 PM",
-    trigger = pit() && prev(pit_score()) == 49 && pit_score() == 50
+    id = 445577, 
+    badge = "535273",
+    points = 5,
+    trigger = 
+            pit() && 
+            prev(pit_score()) == 49 && 
+            pit_score() == 50
 )
 
 achievement(
-    title = "The Krusty Plate", points = 4,
+    title = "The Krusty Plate",
     description = "Reach Round 6 in the Plate Spinning minigame",
-    id = 445578, badge = "535274", published = "7/5/2024 4:07:01 AM", modified = "1/10/2025 10:58:17 PM",
-    trigger = plates() && prev(byte(0x009862)) == 5 && byte(0x009862) == 6
+    id = 445578, 
+    badge = "535274",
+    points = 4,
+    trigger = 
+            plates() && 
+            prev(minigame_data_1()) == 5 && 
+            minigame_data_1() == 6
 )
 
 achievement(
-    title = "Jellyfishing", points = 4,
+    title = "Jellyfishing",
     description = "Reach Round 6 of the Jellyfishing minigame",
-    id = 445579, badge = "535275", published = "7/5/2024 4:07:01 AM", modified = "1/11/2025 9:29:33 PM",
-    trigger = jellyfish() && prev(byte(0x009876)) == 5 && byte(0x009876) == 6
+    id = 445579, 
+    badge = "535275",
+    points = 4,
+    trigger = 
+            jellyfish() && 
+            prev(minigame_data_2()) == 5 && 
+            minigame_data_2() == 6
 )
 
 achievement(
-    title = "Sandy, SpongeBob, and the Worm", points = 4,
+    title = "Sandy, SpongeBob, and the Worm",
     description = "Reach Round 6 of the Worm minigame",
-    id = 445580, badge = "535276", published = "7/5/2024 4:07:02 AM", modified = "1/10/2025 10:58:18 PM",
-    trigger = worm() && prev(byte(0x009862)) == 5 && byte(0x009862) == 6
+    id = 445580, 
+    badge = "535276",
+    points = 4,
+    trigger = 
+            worm() && 
+            prev(minigame_data_1()) == 5 && 
+            minigame_data_1() == 6
 )
 
 achievement(
-    title = "The Sponge Who Could Fly", points = 5,
+    title = "The Sponge Who Could Fly",
     description = "Score 100 points or more in the Float minigame",
-    id = 445581, badge = "535277", published = "7/5/2024 4:07:02 AM", modified = "1/10/2025 10:58:19 PM",
-    trigger = float() && prev(byte(0x009876)) == 0 && byte(0x009876) == 1
+    id = 445581, 
+    badge = "535277",
+    points = 5,
+    trigger = 
+            float() && 
+            prev(minigame_data_2()) == 0 && 
+            minigame_data_2() == 1
 )
 
 achievement(
-    title = "The Fry Cook Games", points = 3,
+    title = "The Fry Cook Games", 
     description = "Win the Hurdle minigame",
-    id = 445582, badge = "535278", published = "7/5/2024 4:07:03 AM", modified = "1/10/2025 10:58:19 PM",
-    trigger = hurdles() && prev(byte(0x009876)) == 0 && byte(0x009876) == 2
+    id = 445582, 
+    badge = "535278",
+    points = 3,
+    trigger = 
+            hurdles() && 
+            prev(minigame_data_2()) == 0 && 
+            minigame_data_2() == 2
 )
 
 leaderboard(
-    id = 106812, title = "High Score - The Pit",
+    title = "High Score - The Pit",
     description = "Get the highest score in The Pit minigame!",
-    start  = ((usa() && usa_in_stage() && pit()) ||
-              (europe() && europe_in_stage() && pit())),
-    cancel = ((usa() && usa_screen() == 40) ||
-              (europe() && eur_screen() == 40)),
-    submit = ((usa() && word(0x009828) == 0) ||
-              (europe() && word(0x009828) == 0)),
-    value  = measured(pit_score()),
+    id = 106812,
+    start  = 
+            (
+                (usa() && 
+                usa_in_stage() && 
+                pit()) ||
+                
+                (europe() && 
+                europe_in_stage() && 
+                pit())
+                ),
+    cancel = 
+            (
+                (usa() && 
+                usa_screen() == 40) ||
+                
+                (europe() && 
+                eur_screen() == 40)
+                ),
+    submit = 
+            (
+                (usa() && 
+                game_over()) ||
+                (europe() && 
+                game_over())),
+    value  = 
+            measured(pit_score()),
     format = "VALUE"
 )
 
 leaderboard(
-    id = 106813, title = "High Score - Float",
+    title = "High Score - Float",
     description = "Get the highest score in the Float minigame!",
-    start  = ((usa() && usa_in_stage() && float()) ||
-              (europe() && europe_in_stage() && float())),
-    cancel = ((usa() && word(0x0022F0) == 40) ||
-              (europe() && eur_screen() == 40)),
-    submit = word(0x009828) == 0,
-    value  = measured((byte(0x00989E) * 1 + byte(0x00988A) * 10 + byte(0x009876) * 100)),
+    id = 106813,
+    start  = 
+            (
+                (usa() && 
+                usa_in_stage() && 
+                float()) ||
+                
+                (europe() && 
+                europe_in_stage() && 
+                float())
+                ),
+    cancel = 
+            (
+                (usa() && 
+                usa_screen() == 40) ||
+                
+                (europe() &&
+                eur_screen() == 40)
+                ),
+    submit = 
+            game_over(),
+    value  = 
+            measured(float_score()),
     format = "VALUE"
 )
 
 leaderboard(
-    id = 114885, title = "Train Stopper",
+    title = "Train Stopper",
     description = "Clear part 3 of Starfish-Man to the rescue in the fastest time!",
-    start  = starfishman_rescue_3() &&
-             ((usa() && usa_screen() == 10 && usa_in_stage() && usa_on_train()) ||
-              (europe() && eur_screen() == 10 && europe_in_stage() && eur_on_train())),
-    cancel = ((usa() && (byte(0x000158) != 54 || usa_screen() == 59 || usa_screen() == 43)) ||
-              (europe() && (byte(0x000158) != 54 || eur_screen() == 59 || eur_screen() == 43))),
-    submit = ((usa() && usa_scene == 12) ||
-              (europe() && byte(0x00706C) == 12)),
-    value  = max_of(
-                 measured(tally(0, usa_in_stage())) && unless(usa_pause()) &&
-                 never((usa_in_stage() && word(0x000062) == 0)),
-                 measured(tally(0, europe_in_stage())) && unless(eur_pause()) &&
-                 never((europe_in_stage() && word(0x000062) == 0))
+    id = 114885, 
+    start  = 
+            starfishman_rescue_3() &&
+                (
+                    (usa() && 
+                    usa_screen() == 10 && 
+                    usa_in_stage() && 
+                    usa_on_train()) ||
+                
+                    (europe() && 
+                    eur_screen() == 10 && 
+                    europe_in_stage() && 
+                    eur_on_train())
+                    ),
+    cancel = 
+            (
+                (usa() && 
+                (!starfishman_rescue_3() || 
+                usa_screen() == 59 || 
+                usa_screen() == 43)) ||
+                
+                (europe() && 
+                (!starfishman_rescue_3() || 
+                eur_screen() == 59 || 
+                eur_screen() == 43))
+                ),
+    submit = 
+            (
+                (usa() && 
+                usa_scene == 12) ||
+                
+                (europe() && 
+                eur_scene() == 12)
+                ),
+    value  = 
+            max_of(
+                 measured(tally(0, usa_in_stage())) && 
+                 unless(usa_pause()) &&
+                 never((usa_in_stage() && 
+                 respawn())),
+                 
+                 measured(tally(0, europe_in_stage())) && 
+                 unless(eur_pause()) &&
+                 never((europe_in_stage() && 
+                 respawn()))
              ),
-    format = "FRAMES", lower_is_better = true
+    format = "FRAMES", 
+    lower_is_better = true
 )
 
 leaderboard(
-    id = 114886, title = "Bull Worm Gastroenterologist",
+    title = "Bull Worm Gastroenterologist",
     description = "Clear part 2 of Alaskan Belly Trouble in the fastest time!",
-    start  = alaskan_belly_2() && word(0x000066) == 767 &&
-             ((usa() && usa_in_stage() && usa_screen() == 17) ||
-              (europe() && europe_in_stage() && eur_screen() == 17)),
-    cancel = ((usa() && (byte(0x000158) != 60 || usa_screen() == 59 || usa_screen() == 43)) ||
-              (europe() && (byte(0x000158) != 60 || eur_screen() == 59 || eur_screen() == 43))),
-    submit = word(0x000062) == 5344,
-    value  = max_of(
-                 measured(tally(0, usa_in_stage())) && unless(usa_pause()) &&
-                 never((usa_in_stage() && word(0x000062) == 0)),
-                 measured(tally(0, europe_in_stage())) && unless(eur_pause()) &&
-                 never((europe_in_stage() && word(0x000062) == 0))
+    id = 114886, 
+    start  = 
+            alaskan_belly_2() && 
+            stage_position_y() == 767 &&
+                (
+                    (usa() && 
+                    usa_in_stage() && 
+                    usa_screen() == 17) ||
+                    
+                    (europe() && 
+                    europe_in_stage() && 
+                    eur_screen() == 17)
+                    ),
+    cancel = 
+            (
+                (usa() && 
+                (!alaskan_belly_2() || 
+                usa_screen() == 59 || 
+                usa_screen() == 43)) ||
+                (europe() && 
+                (!alaskan_belly_2() || 
+                eur_screen() == 59 || 
+                eur_screen() == 43))
+                ),
+    submit = 
+            stage_position_x() == 5344,
+    value  = 
+            max_of(
+                 measured(tally(0, usa_in_stage())) && 
+                 unless(usa_pause()) &&
+                 never((usa_in_stage() && 
+                 respawn())),
+                 
+                 measured(tally(0, europe_in_stage())) && 
+                 unless(eur_pause()) &&
+                 never((europe_in_stage() && 
+                 respawn()))
              ),
-    format = "FRAMES", lower_is_better = true
+    format = "FRAMES", 
+    lower_is_better = true
 )
 
 // Rich Presence
@@ -924,73 +1472,68 @@ MinigameLookup = {
 }
 
 rich_presence_conditional_display( &&
-    ((word(0x00012C) == 50) ||
-     (word(0x00012C) == 46) ||
-     (word(0x00012C) == 48) ||
-     (word(0x00012C) == 47) ||
-     (word(0x00012C) == 49) ||
-     (word(0x00012C) == 0)), "🫧 Diving into Bikini Bottom 🫧")
+    startup(), "🫧 Diving into Bikini Bottom 🫧")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 59, "At the Title Screen")
+rich_presence_conditional_display(usa() && usa_screen() == 59, "At the Title Screen")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 59, "At the Title Screen")
+rich_presence_conditional_display(europe() && eur_screen() == 59, "At the Title Screen")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 57, "🎞️ At the Bikini Bottom Theatre")
+rich_presence_conditional_display(usa() && usa_screen() == 57, "🎞️ At the Bikini Bottom Theatre")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 57, "🎞️ At the Bikini Bottom Theatre")
+rich_presence_conditional_display(europe() && eur_screen() == 57, "🎞️ At the Bikini Bottom Theatre")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 58, "🔧 Exploring different options")
+rich_presence_conditional_display(usa() && usa_screen() == 58, "🔧 Exploring different options")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 58, "🔧 Exploring different options")
+rich_presence_conditional_display(europe() && eur_screen() == 58, "🔧 Exploring different options")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 40, "🕹️ At the Arcade")
+rich_presence_conditional_display(usa() && usa_screen() == 40, "🕹️ At the Arcade")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 40, "🕹️ At the Arcade")
+rich_presence_conditional_display(europe() && eur_screen() == 40, "🕹️ At the Arcade")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 41, "Taking a seat")
+rich_presence_conditional_display(usa() && usa_screen() == 41, "Taking a seat")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 41, "Taking a seat")
+rich_presence_conditional_display(europe() && eur_screen() == 41, "Taking a seat")
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x0022F0) == 42, "📽️ Watching the Credits Roll")
+rich_presence_conditional_display(usa() && usa_screen() == 42, "📽️ Watching the Credits Roll")
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x002300) == 42, "📽️ Watching the Credits Roll")
+rich_presence_conditional_display(europe() && eur_screen() == 42, "📽️ Watching the Credits Roll")
 
-rich_presence_conditional_display(word(0x00012C) == 40, "🕹️ At the Arcade playing the {0} minigame",
-    rich_presence_lookup("Minigame", word(0x000158), MinigameLookup)
+rich_presence_conditional_display(arcade_in_minigame(), "🕹️ At the Arcade playing the {0} minigame",
+    rich_presence_lookup("Minigame", stage_rpc(), MinigameLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x00050E) == 1 && word(0x000158) == 79, "💤 SpongeBob is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(usa() && sponge_racer() && hypnotic_highway(), "💤 SpongeBob is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x00050E) == 2 && word(0x000158) == 79, "💤 Patrick is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(usa() && pat_racer() && hypnotic_highway(), "💤 Patrick is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 0 && word(0x00050E) == 3 && word(0x000158) == 79, "💤 Plankton is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(usa() && plank_racer() && hypnotic_highway(), "💤 Plankton is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x00050E) == 1 && word(0x000158) == 79, "💤 SpongeBob is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(europe() && sponge_racer() && hypnotic_highway(), "💤 SpongeBob is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x00050E) == 2 && word(0x000158) == 79, "💤 Patrick is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(europe() && pat_racer() && hypnotic_highway(), "💤 Patrick is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 8 && word(0x00050E) == 3 && word(0x000158) == 79, "💤 Plankton is in {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(europe() && plank_racer() && hypnotic_highway(), "💤 Plankton is in {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 0, "💤 {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(usa(), "💤 {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
-rich_presence_conditional_display(word(0x0001F5) == 8, "💤 {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+rich_presence_conditional_display(europe(), "💤 {0}...",
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
 
 rich_presence_display("💤 {0}...",
-    rich_presence_lookup("Stage", word(0x000158), StageLookup)
+    rich_presence_lookup("Stage", stage_rpc(), StageLookup)
 )
