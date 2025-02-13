@@ -712,24 +712,21 @@ achievement(
     points = 5,
     trigger = 
             diesel_dreaming_1() && 
+            never(respawn()) && 
             never((usa() && usa_screen() != 4)) &&
             never((europe() && eur_screen() != 4)) &&
                 (
+                    (usa() &&
                     (usa_in_stage() && 
                     usa_screen() == 4 &&
                     measured(tally(8, repeated(8, usa() && 
-                    prev(usa_speed_star()) == 0 && usa_speed_star() == 1))) &&
-                        never((usa_save() == 1 && lives_1() < prev(lives_1()))) &&
-                        never((usa_save() == 2 && lives_2() < prev(lives_2()))) &&
-                        never((usa_save() == 3 && lives_3() < prev(lives_3())))) ||
+                    prev(usa_speed_star()) == 0 && usa_speed_star() == 1))))) ||
                     
+                    (europe() &&
                     (europe_in_stage() && 
                     eur_screen() == 4 &&
                     measured(tally(8, repeated(8, europe() && 
-                    prev(eur_speed_star()) == 0 && eur_speed_star() == 1))) &&
-                        never((eur_save() == 1 && lives_3() < prev(lives_3()))) &&
-                        never((eur_save() == 2 && lives_4() < prev(lives_4()))) &&
-                        never((eur_save() == 3 && lives_5() < prev(lives_5()))))
+                    prev(eur_speed_star()) == 0 && eur_speed_star() == 1)))))
                     )
 )
 
