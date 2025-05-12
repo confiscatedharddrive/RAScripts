@@ -83,6 +83,156 @@ function TotalScientistsRescued_NTSC()
     return count
 }
 
+function ObservatoryScientists()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBC4))
+    return count
+}
+
+function ObservatoryScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBC4 +ntsc_offset()))
+    return count
+}
+
+function ScienceLabScientists()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBC4))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBC5))
+    return count
+}
+
+function ScienceLabScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBC4 +ntsc_offset()))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBC5 +ntsc_offset()))
+    return count
+}
+
+function MachineryScientists()
+{
+    count = 0
+    count = count + sum_of(range(4,7), b => bit(b,0xCFCBC5))
+    count = count + sum_of(range(0,1), b => bit(b,0xCFCBC6))
+    return count
+}
+
+function MachineryScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(4,7), b => bit(b,0xCFCBC5 +ntsc_offset()))
+    count = count + sum_of(range(0,1), b => bit(b,0xCFCBC6 +ntsc_offset()))
+    return count
+}
+
+function FrozenMineScientists()
+{
+    count = 0
+    count = count + sum_of(range(2,7), b => bit(b,0xCFCBC6))
+    return count
+}
+
+function FrozenMineScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(2,7), b => bit(b,0xCFCBC6 +ntsc_offset()))
+    return count
+}
+
+function CanyonScientists()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBC7))
+    return count
+}
+
+function CanyonScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBC7 +ntsc_offset()))
+    return count
+}
+
+function Area52Scientists()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBC7))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBC8))
+    return count
+}
+
+function Area52Scientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBC7 +ntsc_offset()))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBC8 +ntsc_offset()))
+    return count
+}
+
+function UndergroundScientists()
+{
+    count = 0
+    count = count + sum_of(range(4,7), b => bit(b,0xCFCBC8))
+    count = count + sum_of(range(0,1), b => bit(b,0xCFCBC9))
+    return count
+}
+
+function UndergroundScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(4,7), b => bit(b,0xCFCBC8 +ntsc_offset()))
+    count = count + sum_of(range(0,1), b => bit(b,0xCFCBC9 +ntsc_offset()))
+    return count
+}
+
+function SewersScientists()
+{
+    count = 0
+    count = count + sum_of(range(2,7), b => bit(b,0xCFCBC9))
+    return count
+}
+
+function SewersScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(2,7), b => bit(b,0xCFCBC9 +ntsc_offset()))
+    return count
+}
+
+function Channel00Scientists()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBCA))
+    return count
+}
+
+function Channel00Scientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(0,5), b => bit(b,0xCFCBCA +ntsc_offset()))
+    return count
+}
+
+function BackstageScientists()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBCA))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBCB))
+    return count
+}
+
+function BackstageScientists_NTSC()
+{
+    count = 0
+    count = count + sum_of(range(6,7), b => bit(b,0xCFCBCA +ntsc_offset()))
+    count = count + sum_of(range(0,3), b => bit(b,0xCFCBCB +ntsc_offset()))
+    return count
+}
+
 // 0xCFCBCC: [Bitflag Array | 6 Bytes] Player Data Active
 //           Temporary storage of data pre-save to memory card
 
@@ -125,12 +275,14 @@ function EvronianOutfitGet_NTSC() => prev(bit1(0xCFCBCC +ntsc_offset() +2)) == 0
 
 function HiddenReinforcementsGet()
 {
+    count = 0
     count = count + sum_of(range(3,4), b => bit(b,0xCFCBCC +5))
     return count
 }
 
 function HiddenReinforcementsGet_NTSC()
 {
+    count = 0
     count = count + sum_of(range(3,4), b => bit(b,0xCFCBCC +ntsc_offset() +5))
     return count
 }
@@ -318,7 +470,7 @@ achievement(
 )
 
 achievement(
-    title = "Nothing Personal", points = 10, type="win_condition",
+    title = "Nothing Personal", points = 25, type="win_condition",
     description = "Defeat Zondag",
     trigger = 
             (
@@ -389,7 +541,7 @@ achievement(
 
 
 achievement(
-    title = "Swinging Menace", points = 2,
+    title = "Swinging Menace", points = 1,
     description = "Acquire the ability to use Slingports with your X-Transformer",
     trigger = 
             (
@@ -403,7 +555,7 @@ achievement(
 )
 
 achievement(
-    title = "It's Easy to be an Evronian!", points = 2,
+    title = "It's Easy to be an Evronian!", points = 1,
     description = "Acquire the Stolen Outfit",
     trigger = 
             (
@@ -415,7 +567,7 @@ achievement(
 )
 
 achievement(
-    title = "Duckburg's Savior", points = 2, type="progression",
+    title = "Duckburg's Savior", points = 3, type="progression",
     description = "Rescue 40 Scientists and get access to the final level of the game",
     trigger = 
             (
@@ -429,7 +581,7 @@ achievement(
 )
 
 achievement(
-    title = "The Masked Avenger of the Night", points = 4,
+    title = "The Masked Avenger of the Night", points = 5,
     description = "Save all 60 Scientists",
     trigger = (
                 (pal() &&
@@ -447,16 +599,152 @@ achievement(
     description = "Acquire both hidden X-Transformer Reinforcements",
     trigger = 
             (
-                pal() &&
-                HiddenReinforcementsGet() ||
-                ntsc() &&
-                HiddenReinforcementsGet_NTSC()
+                (pal() &&
+                prev(HiddenReinforcementsGet()) == 1 &&
+                measured(HiddenReinforcementsGet() == 2)) ||
+                (ntsc() &&
+                prev(HiddenReinforcementsGet_NTSC()) == 1 &&
+                measured(HiddenReinforcementsGet_NTSC() == 2))
             )
 )
 
 
 achievement(
-    title = "Hyper Energized Duck", points = 25,
-    description = "Clear the game in under 2 hours in one session",
-    trigger = 0
+    title = "All Scientists: Observatory", points = 3,
+    description = "Rescue all Scientists in Observatory",
+    trigger =
+            (
+                (pal() &&
+                prev(ObservatoryScientists()) == 5 &&
+                measured(ObservatoryScientists() == 6)) ||
+                (ntsc() &&
+                prev(ObservatoryScientists_NTSC()) == 5 &&
+                measured(ObservatoryScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Science Lab", points = 3,
+    description = "Rescue all Scientists in Science Lab",
+    trigger =
+            (
+                (pal() &&
+                prev(ScienceLabScientists()) == 5 &&
+                measured(ScienceLabScientists() == 6)) ||
+                (ntsc() &&
+                prev(ScienceLabScientists_NTSC()) == 5 &&
+                measured(ScienceLabScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Machinery", points = 3,
+    description = "Rescue all Scientists in Machinery",
+    trigger =
+            (
+                (pal() &&
+                prev(MachineryScientists()) == 5 &&
+                measured(MachineryScientists() == 6)) ||
+                (ntsc() &&
+                prev(MachineryScientists_NTSC()) == 5 &&
+                measured(MachineryScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Frozen Mine", points = 3,
+    description = "Rescue all Scientists in Frozen Mine",
+    trigger =
+            (
+                (pal() &&
+                prev(FrozenMineScientists()) == 5 &&
+                measured(FrozenMineScientists() == 6)) ||
+                (ntsc() &&
+                prev(FrozenMineScientists_NTSC()) == 5 &&
+                measured(FrozenMineScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Canyon", points = 3,
+    description = "Rescue all Scientists in Canyon",
+    trigger =
+            (
+                (pal() &&
+                prev(CanyonScientists()) == 5 &&
+                measured(CanyonScientists() == 6)) ||
+                (ntsc() &&
+                prev(CanyonScientists_NTSC()) == 5 &&
+                measured(CanyonScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Area 52", points = 3,
+    description = "Rescue all Scientists in Area 52",
+    trigger =
+            (
+                (pal() &&
+                prev(Area52Scientists()) == 5 &&
+                measured(Area52Scientists() == 6)) ||
+                (ntsc() &&
+                prev(Area52Scientists_NTSC()) == 5 &&
+                measured(Area52Scientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Underground", points = 3,
+    description = "Rescue all Scientists in Underground",
+    trigger =
+            (
+                (pal() &&
+                prev(UndergroundScientists()) == 5 &&
+                measured(UndergroundScientists() == 6)) ||
+                (ntsc() &&
+                prev(UndergroundScientists_NTSC()) == 5 &&
+                measured(UndergroundScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Sewers", points = 3,
+    description = "Rescue all Scientists in Sewers",
+    trigger =
+            (
+                (pal() &&
+                prev(SewersScientists()) == 5 &&
+                measured(SewersScientists() == 6)) ||
+                (ntsc() &&
+                prev(SewersScientists_NTSC()) == 5 &&
+                measured(SewersScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Channel 00", points = 3,
+    description = "Rescue all Scientists in Channel 00",
+    trigger =
+            (
+                (pal() &&
+                prev(Channel00Scientists()) == 5 &&
+                measured(Channel00Scientists() == 6)) ||
+                (ntsc() &&
+                prev(Channel00Scientists_NTSC()) == 5 &&
+                measured(Channel00Scientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "All Scientists: Backstage", points = 3,
+    description = "Rescue all Scientists in Backstage",
+    trigger =
+            (
+                (pal() &&
+                prev(BackstageScientists()) == 5 &&
+                measured(BackstageScientists() == 6)) ||
+                (ntsc() &&
+                prev(BackstageScientists_NTSC()) == 5 &&
+                measured(BackstageScientists_NTSC() == 6))
+            )
 )
