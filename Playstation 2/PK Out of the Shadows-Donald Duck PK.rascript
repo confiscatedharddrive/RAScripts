@@ -512,7 +512,7 @@ achievement(
 )
 
 achievement(
-    title = "Super Duck", points = 1,
+    title = "Super Duck", points = 2,
     description = "Acquire the X-Transformer supercharge upgrade",
     trigger = 
             (
@@ -526,7 +526,7 @@ achievement(
 )
 
 achievement(
-    title = "Remote X-Transformer", points = 1,
+    title = "Remote X-Transformer", points = 2,
     description = "Acquire REX",
     trigger = 
             (
@@ -541,7 +541,7 @@ achievement(
 
 
 achievement(
-    title = "Swinging Menace", points = 1,
+    title = "Swinging Menace", points = 3,
     description = "Acquire the ability to use Slingports with your X-Transformer",
     trigger = 
             (
@@ -555,7 +555,7 @@ achievement(
 )
 
 achievement(
-    title = "It's Easy to Be an Evronian!", points = 1,
+    title = "It's Easy to Be an Evronian!", points = 4,
     description = "Acquire the Stolen Outfit",
     trigger = 
             (
@@ -567,7 +567,7 @@ achievement(
 )
 
 achievement(
-    title = "Duckburg's Savior", points = 3, type="progression",
+    title = "Duckburg's Savior", points = 5, type="progression",
     description = "Rescue 40 Scientists and get access to the final level of the game",
     trigger = 
             (
@@ -581,7 +581,7 @@ achievement(
 )
 
 achievement(
-    title = "The Masked Avenger of the Night", points = 5,
+    title = "The Masked Avenger of the Night", points = 10,
     description = "Rescue all 60 Scientists",
     trigger = (
                 (pal() &&
@@ -610,7 +610,7 @@ achievement(
 
 
 achievement(
-    title = "All Scientists: Observatory", points = 3,
+    title = "All Scientists: Observatory", points = 5,
     description = "Rescue all Scientists in Observatory",
     trigger =
             (
@@ -624,7 +624,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Science Lab", points = 3,
+    title = "All Scientists: Science Lab", points = 5,
     description = "Rescue all Scientists in Science Lab",
     trigger =
             (
@@ -638,7 +638,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Machinery", points = 3,
+    title = "All Scientists: Machinery", points = 5,
     description = "Rescue all Scientists in Machinery",
     trigger =
             (
@@ -652,7 +652,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Frozen Mine", points = 3,
+    title = "All Scientists: Frozen Mine", points = 5,
     description = "Rescue all Scientists in Frozen Mine",
     trigger =
             (
@@ -666,7 +666,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Canyon", points = 3,
+    title = "All Scientists: Canyon", points = 5,
     description = "Rescue all Scientists in Canyon",
     trigger =
             (
@@ -680,7 +680,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Area 52", points = 3,
+    title = "All Scientists: Area 52", points = 5,
     description = "Rescue all Scientists in Area 52",
     trigger =
             (
@@ -694,7 +694,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Underground", points = 3,
+    title = "All Scientists: Underground", points = 5,
     description = "Rescue all Scientists in Underground",
     trigger =
             (
@@ -708,7 +708,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Sewers", points = 3,
+    title = "All Scientists: Sewers", points = 5,
     description = "Rescue all Scientists in Sewers",
     trigger =
             (
@@ -722,7 +722,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Channel 00", points = 3,
+    title = "All Scientists: Channel 00", points = 5,
     description = "Rescue all Scientists in Channel 00",
     trigger =
             (
@@ -736,7 +736,7 @@ achievement(
 )
 
 achievement(
-    title = "All Scientists: Backstage", points = 3,
+    title = "All Scientists: Backstage", points = 5,
     description = "Rescue all Scientists in Backstage",
     trigger =
             (
