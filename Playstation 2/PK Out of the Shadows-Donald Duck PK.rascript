@@ -555,7 +555,7 @@ achievement(
 )
 
 achievement(
-    title = "It's Easy to be an Evronian!", points = 1,
+    title = "It's Easy to Be an Evronian!", points = 1,
     description = "Acquire the Stolen Outfit",
     trigger = 
             (
