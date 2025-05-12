@@ -582,7 +582,7 @@ achievement(
 
 achievement(
     title = "The Masked Avenger of the Night", points = 5,
-    description = "Save all 60 Scientists",
+    description = "Rescue all 60 Scientists",
     trigger = (
                 (pal() &&
                 prev(TotalScientistsRescued()) == 59 &&
