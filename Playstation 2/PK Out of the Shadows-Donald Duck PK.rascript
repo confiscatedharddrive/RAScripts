@@ -17,19 +17,25 @@ function pal() => ascii_string_equals(0x36094C, "SLES_507.73;1")
 function ntsc() => ascii_string_equals(0x360DCC, "SLUS_204.78;1")
 
 // 0x7A602B: [Bitflag] Level Clear Flag
-//           +0x4000: NTSC
+//           +0x4000: NTSC-U
 function LevelClear_pal() => prev(bit0(0x7A602B) == 0) && bit0(0x7A602B) == 1
 function LevelClear_ntsc() => prev(bit0(0x7A602B +16384) == 0) && bit0(0x7A602B +16384) == 1
 
-// 0xCFCB04: [PAL] [32-bit] Current Activation Star Count
+// 0xCCDA3D: [8-bit] Player Health
+//           Bit 6: Supercharge available
+//           +0x6341: NTSC-U
+function NoDamageCheck() => unless(once(byte(0xCCDA3D) < prev(byte(0xCCDA3D))))
+function NoDamageCheck_NTSC() => unless(once(byte(0xCCDA3D +25409) < prev(byte(0xCCDA3D +25409))))
+
+// 0xCFCB04: [32-bit] Current Activation Star Count
 //           Displays the amount of Activation Stars a player has. When activating a checkpoint, data resets to 0 and excess is deposited the next address over.
 		
-// 0xCFCB08: [PAL] [32-bit] Activation Star "leftovers"
+// 0xCFCB08: [32-bit] Activation Star "leftovers"
 //           When a teleport panel is activated, any excess Stars are "deposited" here. Data does not accumulate, rather, it is always where excess goes. 
 //           For example if a player has excess of 1 on first checkpoint, data is 1. If a player has 1 excess again at second checkpoint, data is still 1. 
 //           When added to original Activation Star Count address, it reflects the current available Stars the player has.
 
-// 0xCFCB8C: [PAL] [Bitflag Array | 6 Bytes] Player Data Saved to Memory Card
+// 0xCFCB8C: [Bitflag Array | 6 Bytes] Player Data Saved to Memory Card
 //           Last saved player data written to memory card. For whatever reason, the final boss data is used here, exclusively.
 
 //           +0x4
@@ -287,7 +293,7 @@ function HiddenReinforcementsGet_NTSC()
     return count
 }
 
-// 0xCFCBFC: [PAL] [32-bit] Scientists Saved In-Level
+// 0xCFCBFC: [32-bit] Scientists Saved In-Level
 //           Counts amount of scientists saved in the current level loaded.
 
 // 0xCFCC58: [8-bit] X-Transformer Upgrade Count
@@ -299,7 +305,7 @@ function UpgradeCount_NTSC() => byte(0xCFCC58 +ntsc_offset())
 function CurrentLevel() => dword(0xCFD044)
 function CurrentLevel_NTSC() => dword(0xCFD044 +ntsc_offset())
 		
-// 0xCFD6DD: [PAL] [Bitflag] Pause Indicator
+// 0xCFD6DD: [Bitflag] Pause Indicator
 
 achievement(
     title = "Evronians", points = 2, type="progression",
@@ -746,5 +752,43 @@ achievement(
                 (ntsc() &&
                 prev(BackstageScientists_NTSC()) == 5 &&
                 measured(BackstageScientists_NTSC() == 6))
+            )
+)
+
+achievement(
+    title = "The Diabolical Duck Avenger", points = 50,
+    description = "Beat Zondag without taking damage",
+    trigger =
+            never((pal() &&                             // Core
+            CurrentLevel() != 13)) &&
+            never((ntsc() && 
+            CurrentLevel_NTSC() != 13)) &&
+            (                                           // Alts
+                pal() &&
+                CurrentLevel() == 13 &&
+                NoDamageCheck() &&
+                trigger_when(ZondagDefeat()) ||
+                ntsc() &&
+                CurrentLevel_NTSC() == 13 &&
+                NoDamageCheck_NTSC() &&
+                trigger_when(ZondagDefeat_NTSC())
+            )
+)
+
+achievement(
+    title = "Wak! One Too Many!", points = 1,
+    description = "Accidentally regress in firepower",
+    trigger =
+            (
+
+            )
+)
+
+achievement(
+    title = "Hyper Energized Duck", points = 10,
+    description = "Starting from a New Game, clear the game in under 2 hours",
+    trigger =
+            (
+
             )
 )
