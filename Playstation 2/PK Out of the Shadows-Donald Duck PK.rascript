@@ -8,6 +8,9 @@
 // Code notes refer to PAL version primarily. NTSC-U offset is generally +0x628C (or 25228 in decimal) unless otherwise noted
 function ntsc_offset() => 25228
 
+// 0x35FA64: [Bitflag] Player Input
+//           +480: NTSC-U
+
 // 0x36094C: [PAL] [ASCII | 14-bytes] [32-bit BE] CD Serial
 //           SLES_507.73;1
 function pal() => ascii_string_equals(0x36094C, "SLES_507.73;1")
@@ -23,9 +26,11 @@ function LevelClear_ntsc() => prev(bit0(0x7A602B +16384) == 0) && bit0(0x7A602B 
 
 // 0xCCDA3D: [8-bit] Player Health
 //           Bit 6: Supercharge available
-//           +0x6341: NTSC-U
-function NoDamageCheck() => unless(once(byte(0xCCDA3D) < prev(byte(0xCCDA3D))))
-function NoDamageCheck_NTSC() => unless(once(byte(0xCCDA3D +25409) < prev(byte(0xCCDA3D +25409))))
+//           +0x6340: NTSC-U
+function DamageCheck() => byte(0xCCDA3D) < prev(byte(0xCCDA3D))
+function DamageCheck_NTSC() => byte(0xCCDA3D +25408) < prev(byte(0xCCDA3D +25408))
+function Death() => byte(0xCCDA3D) == 0
+function Death_NTSC() => byte(0xCCDA3D +25408) == 0
 
 // 0xCFCB04: [32-bit] Current Activation Star Count
 //           Displays the amount of Activation Stars a player has. When activating a checkpoint, data resets to 0 and excess is deposited the next address over.
@@ -306,6 +311,12 @@ function CurrentLevel() => dword(0xCFD044)
 function CurrentLevel_NTSC() => dword(0xCFD044 +ntsc_offset())
 		
 // 0xCFD6DD: [Bitflag] Pause Indicator
+
+// 0x11AB488: [8-bit] Menu Selection
+//            From Final Boss. Changes per level; no pointer found
+//            +5460: NTSC-U 21600
+function BossReset() => byte(0x11AB488) == 13 && prev(bit6(0x35FA64)) == 0 && bit6(0x35FA64) == 1
+function BossReset_NTSC() => byte(0x11AB488 +21600) == 13 && prev(bit6(0x35FA64 +1152)) == 0 && bit6(0x35FA64 +1152) == 1
 
 achievement(
     title = "Evronians", points = 2, type="progression",
@@ -759,36 +770,49 @@ achievement(
     title = "The Diabolical Duck Avenger", points = 50,
     description = "Beat Zondag without taking damage",
     trigger =
-            never((pal() &&                             // Core
+            never((pal() &&                             // Core with conditional reset for exiting the level
             CurrentLevel() != 13)) &&
             never((ntsc() && 
             CurrentLevel_NTSC() != 13)) &&
             (                                           // Alts
-                pal() &&
+                pal() &&                                // Conditional reset for manually restarting boss from level select
                 CurrentLevel() == 13 &&
-                NoDamageCheck() &&
+                disable_when(DamageCheck(), until=BossReset()) && 
                 trigger_when(ZondagDefeat()) ||
+                pal() &&                                // Conditional reset for death during boss
+                CurrentLevel() == 13 &&
+                disable_when(DamageCheck(), until=Death()) &&
+                trigger_when(ZondagDefeat()) || 
                 ntsc() &&
                 CurrentLevel_NTSC() == 13 &&
-                NoDamageCheck_NTSC() &&
+                disable_when(DamageCheck_NTSC(), until=BossReset_NTSC()) &&
+                trigger_when(ZondagDefeat_NTSC()) ||
+                ntsc() &&
+                CurrentLevel_NTSC() == 13 &&
+                disable_when(DamageCheck_NTSC(), until=Death_NTSC()) &&
                 trigger_when(ZondagDefeat_NTSC())
             )
 )
 
-achievement(
-    title = "Wak! One Too Many!", points = 1,
-    description = "Accidentally regress in firepower",
-    trigger =
-            (
+// Rich Presence
 
-            )
-)
+Lookup:Level
+    0=suiting up in the Ducklair Tower...
+    1=fighting Evronians in the Observatory
+    2=fighting Evronians in the Science Lab
+    3=fighting Evronians amongst Machinery
+    4=fighting Evronians in the Frozen Mine
+    5=fighting Evronians in the Canyon
+    6=fighting Evronians in Area 52
+    7=fighting Evronians in the Underground
+    8=fighting against Zoster
+    9=fighting Evronians in the Sewers
+    10=fighting Evronians in the Channel 00 Headquarters
+    11=fighting Evronians in the Backstage of Channel 00
+    12=fighting Evronians in the Evronian Mothership
+    13=fighting against Zondag
 
-achievement(
-    title = "Hyper Energized Duck", points = 10,
-    description = "Starting from a New Game, clear the game in under 2 hours",
-    trigger =
-            (
-
-            )
-)
+Display:
+    ?0xG36094C=1397507411?PK is @Level(0xXCFD044) //PAL Conditional Display
+    ?0xG360DCC=1397511507?PK is @Level(0xXD032D0) //NTSC-U Conditional Display
+    Napping in the Ducklair Tower's 151st Floor... //Bootup
