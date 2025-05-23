@@ -559,7 +559,7 @@ achievement(
 
 achievement(
     title = "Swinging Menace", points = 3,
-    description = "Acquire the ability to use Slingports with your X-Transformer",
+    description = "Acquire the ability to use Swingports with your X-Transformer",
     trigger = 
             (
                 pal() &&
