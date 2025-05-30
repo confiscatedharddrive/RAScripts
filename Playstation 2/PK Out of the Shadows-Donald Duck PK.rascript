@@ -24,6 +24,10 @@ function ntsc() => ascii_string_equals(0x360DCC, "SLUS_204.78;1")
 function LevelClear_pal() => prev(bit0(0x7A602B) == 0) && bit0(0x7A602B) == 1
 function LevelClear_ntsc() => prev(bit0(0x7A602B +16384) == 0) && bit0(0x7A602B +16384) == 1
 
+// 0x7BD75D: [NTSC-U] [Bitflag] Level Clear Flag
+//           Used in Mothership level
+function MothershipClear_NTSC() => prev(bit0(0x7BD75D) == 0) && bit0(0x7BD75D) == 1
+
 // 0xCCDA3D: [8-bit] Player Health
 //           Bit 6: Supercharge available
 //           +0x6340: NTSC-U
@@ -333,7 +337,7 @@ achievement(
 )
 
 achievement(
-    title = "Portrait of a Young Hero", points = 2, type="progression",
+    title = "Portrait of the Hero as a Young Duck", points = 2, type="progression",
     description = "Clear Science Lab",
     trigger = 
             (
@@ -482,7 +486,7 @@ achievement(
                 LevelClear_pal() ||
                 ntsc() &&
                 CurrentLevel_NTSC() == 12 &&
-                LevelClear_ntsc()
+                MothershipClear_NTSC()
             )
 )
 
