@@ -118,6 +118,16 @@ function minigames_unlocked() => bitcount(0x000238) == 8
 //         0x00: Out of Goo
 //         0x01: In Goo
 function goo() => byte(0x000357) == 1
+
+// 0x30EA: [NTSC] [Bitflag] Plankton Laser Eye Status
+//         Bit 1: Laser hit player
+
+function laser_hit_ntsc() => bit1(0x0030EA) == 1
+
+// 0x30FA: [EUR] [Bitflag] Plankton Laser Eye Status
+//         Bit 1: Laser hit player
+
+function laser_hit_pal() => bit1(0x0030FA) == 1
 		
 // 0x04FC: [16-bit] Countdown Timer
 //         Tied to graphical countdown timer in-level. Once it hits 0000, player dies and is respawned at the start and timer resets.
@@ -1014,12 +1024,12 @@ achievement(
                     (usa() && 
                     prev(usa_in_stage()) &&
                     unless(once(usa_screen() == 31 && 
-                    usa_health() > 0 && usa_health() < prev(usa_health())))) ||
+                    laser_hit()))) ||
                     
                     (europe() && 
                     prev(europe_in_stage()) &&
                     unless(once(eur_screen() == 31 && eur_health() > 0 && 
-                    eur_health() < prev(eur_health()))))
+                    laser_hit_pal())))
                     )
 )
 
