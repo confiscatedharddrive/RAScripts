@@ -114,10 +114,10 @@ function europe() => byte(0x0001F5) == 8
 //         Takes into account all save files when calculating what games are unlocked.
 function minigames_unlocked() => bitcount(0x000238) == 8
 		
-// 0x0357: [8-bit] Goo Status
-//         0x00: Out of Goo
-//         0x01: In Goo
-function goo() => byte(0x000357) == 1
+// 0x0357: [Bitflag | Bit 0] Goo Status
+//         0: Out of Goo
+//         1: In Goo
+function goo() => bit0(0x000357) == 1
 
 // 0x30EA: [NTSC] [Bitflag] Plankton Laser Eye Status
 //         Bit 1: Laser hit player
@@ -834,11 +834,16 @@ achievement(
     points = 10,
     trigger = 
             supersized_patty_2() && 
-            never(respawn()) && 
             never((usa() && 
             usa_screen() != 13)) &&
+            never((usa() && 
+            usa_health() == 0 &&
+            !goo())) &&
             never((europe() && 
             eur_screen() != 13)) &&
+            never((europe() && 
+            eur_health() == 0 &&
+            !goo())) &&
                 (
                     (usa() && 
                     usa_screen() == 13 && 
