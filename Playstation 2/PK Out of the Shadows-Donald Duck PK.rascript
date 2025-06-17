@@ -491,7 +491,7 @@ achievement(
 )
 
 achievement(
-    title = "Nothing Personal", points = 25, type="win_condition",
+    title = "Nothing Personal", points = 10, type="win_condition",
     description = "Defeat Zondag",
     trigger = 
             (
@@ -771,7 +771,7 @@ achievement(
 )
 
 achievement(
-    title = "The Diabolical Duck Avenger", points = 50,
+    title = "The Diabolical Duck Avenger", points = 25,
     description = "Beat Zondag without taking damage",
     trigger =
             never((pal() &&                             // Core with conditional reset for exiting the level
