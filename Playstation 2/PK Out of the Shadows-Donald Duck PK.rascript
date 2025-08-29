@@ -36,8 +36,17 @@ function DamageCheck_NTSC() => byte(0xCCDA3D +25408) < prev(byte(0xCCDA3D +25408
 function Death() => byte(0xCCDA3D) == 0
 function Death_NTSC() => byte(0xCCDA3D +25408) == 0
 
+// 0xCFCB00: [Bitflag] Last checkpoint activated
+//           Changes depending on which checkpoint in the level was activated. 
+//           Earlier bits reflect earlier checkpoints. Is always either 2 or 4 bits active at the same time. 
+//           Starting checkpoints can begin with either Bits 0 & 2, or Bits 1 & 3.
+function CheckpointCheck() => prev(byte(0xCFCB00)) == 0 && byte(0xCFCB00) > 0
+function CheckpointCheck_NTSC() => prev(byte(0xCFCB00 +25228)) == 0 && byte(0xCFCB00 +25228) > 0
+
 // 0xCFCB04: [32-bit] Current Activation Star Count
 //           Displays the amount of Activation Stars a player has. When activating a checkpoint, data resets to 0 and excess is deposited the next address over.
+function ActivationStarCount() => dword(0xCFCB04)
+function ActivationStarCount_NTSC() => dword(0xCFCB04 +25228)
 		
 // 0xCFCB08: [32-bit] Activation Star "leftovers"
 //           When a teleport panel is activated, any excess Stars are "deposited" here. Data does not accumulate, rather, it is always where excess goes. 
@@ -287,6 +296,9 @@ function ZosterDefeat_NTSC() => prev(bit7(0xCFCBCC +ntsc_offset() +3) == 0) && b
 
 function EvronianOutfitGet() => prev(bit1(0xCFCBCC +2)) == 0 && bit1(0xCFCBCC +2) == 1
 function EvronianOutfitGet_NTSC() => prev(bit1(0xCFCBCC +ntsc_offset() +2)) == 0 && bit1(0xCFCBCC +ntsc_offset() +2) == 1
+
+function PKCheck() => bit1(0xCFCBCC +2) == 0
+function PKCheck_NTSC() => bit1(0xCFCBCC +ntsc_offset() +2) == 0
 
 function HiddenReinforcementsGet()
 {
@@ -798,7 +810,57 @@ achievement(
             )
 )
 
+achievement(
+    title = "All I Need Is My Trusty X-Transformer!", points = 5, type="missable",
+    description = "Clear Canyon without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade",
+    trigger =
+            never((pal() &&                             
+            CurrentLevel() != 5)) &&
+            never((ntsc() && 
+            CurrentLevel_NTSC() != 5)) &&
+            (                                           
+                pal() &&                                
+                CurrentLevel() == 5 &&
+                PKCheck() &&
+                disable_when(CheckpointCheck()) && 
+                trigger_when(LevelClear_pal()) ||
+                ntsc() &&
+                CurrentLevel_NTSC() == 5 &&
+                PKCheck_NTSC() &&
+                disable_when(CheckpointCheck_NTSC()) &&
+                trigger_when(LevelClear_ntsc())
+            )
+)
+
+achievement(
+    title = "More Tense than an Episode of Anxieties", points = 10, type="missable",
+    description = "Clear Channel 00 without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade",
+    trigger =
+            never((pal() &&                             
+            CurrentLevel() != 10)) &&
+            never((ntsc() && 
+            CurrentLevel_NTSC() != 10)) &&
+            (                                           
+                pal() &&                                
+                CurrentLevel() == 10 &&
+                PKCheck() &&
+                disable_when(CheckpointCheck()) && 
+                trigger_when(LevelClear_pal()) ||
+                ntsc() &&
+                CurrentLevel_NTSC() == 10 &&
+                PKCheck_NTSC() &&
+                disable_when(CheckpointCheck_NTSC()) &&
+                trigger_when(LevelClear_ntsc())
+            )
+)
+
+
 // Rich Presence
+Format:Scientists
+FormatType=VALUE
+
+Format:ActivationStars
+FormatType=VALUE
 
 Lookup:Level
     0=suiting up in the Ducklair Tower...
@@ -817,6 +879,34 @@ Lookup:Level
     13=fighting against Zondag
 
 Display:
-    ?0xG36094C=1397507411?PK is @Level(0xXCFD044) //PAL Conditional Display
-    ?0xG360DCC=1397511507?PK is @Level(0xXD032D0) //NTSC-U Conditional Display
+    ?0xG36094C=1397507411_0xXCFD044=0?PK is @Level(0xXCFD044) // PAL Dyanmic Level RP
+    ?0xG36094C=1397507411_0xXCFD044=1?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xMCFCBC4_0xNCFCBC4_0xOCFCBC4_0xPCFCBC4_0xQCFCBC4_0xRCFCBC4)/6]
+    ?0xG36094C=1397507411_0xXCFD044=2?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xSCFCBC4_0xTCFCBC4_0xMCFCBC5_0xNCFCBC5_0xOCFCBC5_0xPCFCBC5)/6]
+    ?0xG36094C=1397507411_0xXCFD044=3?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xQCFCBC5_0xRCFCBC5_0xSCFCBC5_0xTCFCBC5_0xMCFCBC6_0xNCFCBC6)/6]
+    ?0xG36094C=1397507411_0xXCFD044=4?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xOCFCBC6_0xPCFCBC6_0xQCFCBC6_0xRCFCBC6_0xSCFCBC6_0xTCFCBC6)/6]
+    ?0xG36094C=1397507411_0xXCFD044=5?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xMCFCBC7_0xNCFCBC7_0xOCFCBC7_0xPCFCBC7_0xQCFCBC7_0xRCFCBC7)/6]
+    ?0xG36094C=1397507411_0xXCFD044=6?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xSCFCBC7_0xTCFCBC7_0xMCFCBC8_0xNCFCBC8_0xOCFCBC8_0xPCFCBC8)/6]
+    ?0xG36094C=1397507411_0xXCFD044=7?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xQCFCBC8_0xRCFCBC8_0xSCFCBC8_0xTCFCBC8_0xMCFCBC9_0xNCFCBC9)/6]
+    ?0xG36094C=1397507411_0xXCFD044=8?PK is @Level(0xXCFD044)
+    ?0xG36094C=1397507411_0xXCFD044=9?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xOCFCBC9_0xPCFCBC9_0xQCFCBC9_0xRCFCBC9_0xSCFCBC9_0xTCFCBC9)/6]
+    ?0xG36094C=1397507411_0xXCFD044=10?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xMCFCBCA_0xNCFCBCA_0xOCFCBCA_0xPCFCBCA_0xQCFCBCA_0xRCFCBCA)/6]
+    ?0xG36094C=1397507411_0xXCFD044=11?PK is @Level(0xXCFD044) [💫 @ActivationStars(0xHCFCB04_0xHCFCB08)] [🥼 @Scientists(0xSCFCBCA_0xTCFCBCA_0xMCFCBCB_0xNCFCBCB_0xOCFCBCB_0xPCFCBCB)/6]
+    ?0xG36094C=1397507411_0xXCFD044=12?PK is @Level(0xXCFD044)
+    ?0xG36094C=1397507411_0xXCFD044=13?PK is @Level(0xXCFD044)
+
+    ?0xG360DCC=1397511507_0xXD032D0=0?PK is @Level(0xXD032D0) // NTSC-U Dynamic Level RP
+    ?0xG360DCC=1397511507_0xXD032D0=1?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xMD02E50_0xND02E50_0xOD02E50_0xPD02E50_0xQD02E50_0xRD02E50)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=2?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xSD02E50_0xTD02E50_0xMD02E51_0xND02E51_0xOD02E51_0xPD02E51)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=3?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xQD02E51_0xRD02E51_0xSD02E51_0xTD02E51_0xMD02E52_0xND02E52)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=4?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xOD02E52_0xPD02E52_0xQD02E52_0xRD02E52_0xSD02E52_0xTD02E52)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=5?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xMD02E53_0xND02E53_0xOD02E53_0xPD02E53_0xQD02E53_0xRD02E53)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=6?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xSD02E53_0xTD02E53_0xMD02E54_0xND02E54_0xOD02E54_0xPD02E54)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=7?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xQD02E54_0xRD02E54_0xSD02E54_0xTD02E54_0xMD02E55_0xND02E55)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=8?PK is @Level(0xXD032D0)
+    ?0xG360DCC=1397511507_0xXD032D0=9?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xOD02E55_0xPD02E55_0xQD02E55_0xRD02E55_0xSD02E55_0xTD02E55)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=10?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xMD02E56_0xND02E56_0xOD02E56_0xPD02E56_0xQD02E56_0xRD02E56)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=11?PK is @Level(0xXD032D0) [💫 @ActivationStars(0xHD02D90_0xHD02D94)] [🥼 @Scientists(0xSD02E56_0xTD02E56_0xMD02E57_0xND02E57_0xOD02E57_0xPD02E57)/6]
+    ?0xG360DCC=1397511507_0xXD032D0=12?PK is @Level(0xXD032D0)
+    ?0xG360DCC=1397511507_0xXD032D0=13?PK is @Level(0xXD032D0)
+
     Napping in the Ducklair Tower's 151st Floor... //Bootup
