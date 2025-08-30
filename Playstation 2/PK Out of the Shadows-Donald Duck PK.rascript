@@ -24,6 +24,7 @@ function ntsc() => ascii_string_equals(0x360DCC, "SLUS_204.78;1")
 function LevelClear_pal() => prev(bit0(0x7A602B) == 0) && bit0(0x7A602B) == 1
 function LevelClear_ntsc() => prev(bit0(0x7A602B +16384) == 0) && bit0(0x7A602B +16384) == 1
 
+
 // 0x7BD75D: [NTSC-U] [Bitflag] Level Clear Flag
 //           Used in Mothership level
 function MothershipClear_NTSC() => prev(bit0(0x7BD75D) == 0) && bit0(0x7BD75D) == 1
@@ -40,13 +41,19 @@ function Death_NTSC() => byte(0xCCDA3D +25408) == 0
 //           Changes depending on which checkpoint in the level was activated. 
 //           Earlier bits reflect earlier checkpoints. Is always either 2 or 4 bits active at the same time. 
 //           Starting checkpoints can begin with either Bits 0 & 2, or Bits 1 & 3.
+function Checkpoint() => byte(0xCFCB00)
+function Checkpoint_NTSC() => byte(0xCFCB00 +ntsc_offset())
+
 function CheckpointCheck() => prev(byte(0xCFCB00)) == 0 && byte(0xCFCB00) > 0
-function CheckpointCheck_NTSC() => prev(byte(0xCFCB00 +25228)) == 0 && byte(0xCFCB00 +25228) > 0
+function CheckpointCheck_NTSC() => prev(byte(0xCFCB00 +ntsc_offset())) == 0 && byte(0xCFCB00 +ntsc_offset()) > 0
+
+function ResetIfCheckpoint() => never(byte(0xCFCB00) != 0)
+function ResetIfCheckpoint_NTSC() => never(byte(0xCFCB00 +ntsc_offset()) != 0)
 
 // 0xCFCB04: [32-bit] Current Activation Star Count
 //           Displays the amount of Activation Stars a player has. When activating a checkpoint, data resets to 0 and excess is deposited the next address over.
 function ActivationStarCount() => dword(0xCFCB04)
-function ActivationStarCount_NTSC() => dword(0xCFCB04 +25228)
+function ActivationStarCount_NTSC() => dword(0xCFCB04 +ntsc_offset())
 		
 // 0xCFCB08: [32-bit] Activation Star "leftovers"
 //           When a teleport panel is activated, any excess Stars are "deposited" here. Data does not accumulate, rather, it is always where excess goes. 
@@ -325,6 +332,29 @@ function UpgradeCount_NTSC() => byte(0xCFCC58 +ntsc_offset())
 // 0xCFD044: [32-bit] Level Indicator
 function CurrentLevel() => dword(0xCFD044)
 function CurrentLevel_NTSC() => dword(0xCFD044 +ntsc_offset())
+
+function LB_InObservatory() => once(prev(dword(0xCFD044)) != 1 && dword(0xCFD044) == 1)
+function LB_InObservatory_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 1 && dword(0xCFD044 +ntsc_offset()) == 1)
+function LB_InScienceLab() => once(prev(dword(0xCFD044)) != 2 && dword(0xCFD044) == 2)
+function LB_InScienceLab_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 2 && dword(0xCFD044 +ntsc_offset()) == 2)
+function LB_InMachinery() => once(prev(dword(0xCFD044)) != 3 && dword(0xCFD044) == 3)
+function LB_InMachinery_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 3 && dword(0xCFD044 +ntsc_offset()) == 3)
+function LB_InFrozenMine() => once(prev(dword(0xCFD044)) != 4 && dword(0xCFD044) == 4)
+function LB_InFrozenMine_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 4 && dword(0xCFD044 +ntsc_offset()) == 4)
+function LB_InCanyon() => once(prev(dword(0xCFD044)) != 5 && dword(0xCFD044) == 5)
+function LB_InCanyon_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 5 && dword(0xCFD044 +ntsc_offset()) == 5)
+function LB_InArea52() => once(prev(dword(0xCFD044)) != 6 && dword(0xCFD044) == 6)
+function LB_InArea52_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 6 && dword(0xCFD044 +ntsc_offset()) == 6)
+function LB_InUnderground() => once(prev(dword(0xCFD044)) != 7 && dword(0xCFD044) == 7)
+function LB_InUnderground_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 7 && dword(0xCFD044 +ntsc_offset()) == 7)
+function LB_InSewers() => once(prev(dword(0xCFD044)) != 9 && dword(0xCFD044) == 9)
+function LB_InSewers_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 9 && dword(0xCFD044 +ntsc_offset()) == 9)
+function LB_InChannel00() => once(prev(dword(0xCFD044)) != 10 && dword(0xCFD044) == 10)
+function LB_InChannel00_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 10 && dword(0xCFD044 +ntsc_offset()) == 10)
+function LB_InBackstage() => once(prev(dword(0xCFD044)) != 11 && dword(0xCFD044) == 11)
+function LB_InBackstage_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 11 && dword(0xCFD044 +ntsc_offset()) == 11)
+function LB_InMothership() => once(prev(dword(0xCFD044)) != 12 && dword(0xCFD044) == 12)
+function LB_InMothership_NTSC() => once(prev(dword(0xCFD044 +ntsc_offset())) != 12 && dword(0xCFD044 +ntsc_offset()) == 12)
 		
 // 0xCFD6DD: [Bitflag] Pause Indicator
 
@@ -784,7 +814,7 @@ achievement(
 
 achievement(
     title = "The Diabolical Duck Avenger", points = 25,
-    description = "Beat Zondag without taking damage",
+    description = "Defeat Zondag without taking damage",
     trigger =
             never((pal() &&                             // Core with conditional reset for exiting the level
             CurrentLevel() != 13)) &&
@@ -812,7 +842,7 @@ achievement(
 
 achievement(
     title = "All I Need Is My Trusty X-Transformer!", points = 5, type="missable",
-    description = "Clear Canyon without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade",
+    description = "Clear Canyon without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade (Exit level to retry)",
     trigger =
             never((pal() &&                             
             CurrentLevel() != 5)) &&
@@ -834,7 +864,7 @@ achievement(
 
 achievement(
     title = "More Tense than an Episode of Anxieties", points = 10, type="missable",
-    description = "Clear Channel 00 without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade",
+    description = "Clear Channel 00 without activating any Teleportation Stations and before unlocking the Stolen Outfit upgrade (Exit level to retry)",
     trigger =
             never((pal() &&                             
             CurrentLevel() != 10)) &&
@@ -852,6 +882,336 @@ achievement(
                 disable_when(CheckpointCheck_NTSC()) &&
                 trigger_when(LevelClear_ntsc())
             )
+)
+
+leaderboard(
+    title = "Broke Duck - Observatory",
+    description = "Collect the fewest number of Activation Stars in Observatory without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 1)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 1)) &&
+            (((pal() && 
+            LB_InObservatory()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InObservatory_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Science Lab",
+    description = "Collect the fewest number of Activation Stars in Science Lab without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 2)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 2)) &&
+            (((pal() && 
+            LB_InScienceLab()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InScienceLab_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Machinery",
+    description = "Collect the fewest number of Activation Stars in Machinery without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 3)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 3)) &&
+            (((pal() && 
+            LB_InMachinery()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InMachinery_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Frozen Mine",
+    description = "Collect the fewest number of Activation Stars in Frozen Mine without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 4)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 4)) &&
+            (((pal() && 
+            LB_InFrozenMine()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InFrozenMine_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Canyon",
+    description = "Collect the fewest number of Activation Stars in Canyon without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 5)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 5)) &&
+            (((pal() && 
+            LB_InCanyon()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InCanyon_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Area 52",
+    description = "Collect the fewest number of Activation Stars in Area 52 without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 6)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 6)) &&
+            (((pal() && 
+            LB_InArea52()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InArea52_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Underground",
+    description = "Collect the fewest number of Activation Stars in Underground without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 7)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 7)) &&
+            (((pal() && 
+            LB_InUnderground()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InUnderground_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Sewers",
+    description = "Collect the fewest number of Activation Stars in Sewers without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 9)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 9)) &&
+            (((pal() && 
+            LB_InSewers()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InSewers_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Channel 00",
+    description = "Collect the fewest number of Activation Stars in Channel 00 without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 10)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 10)) &&
+            (((pal() && 
+            LB_InChannel00()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InChannel00_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Backstage",
+    description = "Collect the fewest number of Activation Stars in Backstage without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 11)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 11)) &&
+            (((pal() && 
+            LB_InBackstage()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InBackstage_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
+)
+
+leaderboard(
+    title = "Broke Duck - Mothership",
+    description = "Collect the fewest number of Activation Stars in Mothership without activating any Teleportation Stations (Exit level to retry)",
+    start  = 
+            never((pal() && Checkpoint() != 0)) &&
+            never((pal() && CurrentLevel() != 12)) &&
+            never((ntsc() && Checkpoint_NTSC() != 0)) &&
+            never((ntsc() && CurrentLevel_NTSC() != 12)) &&
+            (((pal() && 
+            LB_InMothership()) &&
+            LevelClear_pal()) ||
+            ((ntsc() && 
+            LB_InMothership_NTSC()) &&
+            LevelClear_ntsc())),
+    cancel = 
+            always_false(),
+    submit = 
+            always_true(),
+    value  = 
+            max_of(
+                 measured(ActivationStarCount(),
+                     when=(pal())
+                     ),
+                 measured(ActivationStarCount_NTSC(),
+                     when=(ntsc())
+                    )
+             ),
+    format = "VALUE", lower_is_better = true
 )
 
 
