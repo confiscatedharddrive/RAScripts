@@ -19,6 +19,9 @@ function pal() => ascii_string_equals(0x36094C, "SLES_507.73;1")
 //           SLUS_204.78;1
 function ntsc() => ascii_string_equals(0x360DCC, "SLUS_204.78;1")
 
+// 0x7A5FDB: [Bitflag] Alternate Level Clear Flag
+function Levelclear_pal_alt() => prev(bit0(0x7A5FDB) == 0) && bit0(0x7A5FDB) == 1
+
 // 0x7A602B: [Bitflag] Level Clear Flag
 //           +0x4000: NTSC-U
 function LevelClear_pal() => prev(bit0(0x7A602B) == 0) && bit0(0x7A602B) == 1
@@ -525,7 +528,7 @@ achievement(
             (
                 pal() && 
                 CurrentLevel() == 12 &&
-                LevelClear_pal() ||
+                Levelclear_pal_alt() ||
                 ntsc() &&
                 CurrentLevel_NTSC() == 12 &&
                 MothershipClear_NTSC()
