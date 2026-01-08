@@ -161,7 +161,11 @@
 //           0x8C08EE86: Boat Selection Screen
 //           0x8C03F7BA: Pause Screen
 
-// 0x1EB00D, 0x1FE6BD, 0x25C82D, 0x293ECD: SOMETHING to do with in-game leaderboards
+// 0x1FE66C: [ASCII | 1121 Bytes] Leaderboard
+//           Leaderboard info for all tracks in the game. Updates in real time from file load.
+//           +0x321: Thunder Park #1 Spot
+//           +0x51: Lost Island #1 Spot
+//           +0x141: Arctic Circle #1 Spot
 
 // Achievements
 
@@ -440,17 +444,150 @@ achievement(
     trigger =
 )
 
-achievement(
-    title = "",
-    description = "Set a 1st place record for x", // Repeat for each track
-    points = ,
-    trigger =
-)
 
 achievement(
     title = "Crazy Boat",
-    description = "Smash into your rivals 5 times in a single race", // If dynamic hit detection can be figured out
+    description = "Smash into your rivals 10 times in a single race", // If dynamic hit detection can be figured out
     points = ,
     trigger =
 )
 
+achievement(
+    title = "",
+    description = "",
+    points = ,
+    trigger =
+)
+
+
+// Leaderboards
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Thunder Park",
+    description = "Finish Thunder Park as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Lost Island",
+    description = "Finish Lost Island as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Arctic Circle",
+    description = "Finish Arctic Circle as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Greek Isles",
+    description = "Finish Greek Isles as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Lake Powell",
+    description = "Finish Lake Powell as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - The Far East",
+    description = "Finish The Far East as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Ship Graveyard",
+    description = "Finish Ship Graveyard as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Venice Canals",
+    description = "Finish Venice Canals as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - N.Y. Disaster",
+    description = "Finish N.Y. Disaster as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Catacomb",
+    description = "Finish Catacomb as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Hydro Speedway",
+    description = "Finish Hydro Speedway as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Castle Von Dandy",
+    description = "Finish Castle Von Dandy as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
+
+leaderboard(
+    title = "H.T.R.A. Ambassador - Nile Adventure",
+    description = "Finish Nile Adventure as fast as possible!",
+    start  = 
+    cancel = 
+    submit = 
+    value  = 
+    format = "SECONDS", lower_is_better = true
+)
