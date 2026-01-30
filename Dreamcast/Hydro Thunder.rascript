@@ -71,6 +71,9 @@
 
 // 0x25643C: [8-bit] Player Position
 
+// 0x256340: [Bitflag] [Boolean] Boat Smashed
+//           Turns true when bashing into rival boats, buoys, or passerby boats while boosting in any race
+
 // 0x25657C: [8bit] Boat Status
 //           0x00: In Water
 //           0x01: In Air
@@ -166,6 +169,16 @@
 //           +0x321: Thunder Park #1 Spot
 //           +0x51: Lost Island #1 Spot
 //           +0x141: Arctic Circle #1 Spot
+//           +0x231: Greek Isles #1 Spot
+//           +0xF1: Lake Powell #1 Spot
+//           +0x281: The Far East #1 Spot
+//           +0x1: Ship Graveyard #1 Spot
+//           +0xA1: Venice Canals #1 Spot
+//           +0x1E1: N.Y. Disaster #1 Spot
+//           +0x3C1: Castle Von Dandy #1 Spot
+//           +0x411: Catacomb #1 Spot
+//           +0x371: Hydro Speedway #1 Spot
+//           +0x191: Nile Adventure #1 Spot
 
 // Achievements
 
