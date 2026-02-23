@@ -91,6 +91,10 @@ function Finish() => prev(bit0(0x200AE0)) == 0x00 && bit0(0x200AE0) == 0x01
 // 0x25643C: [8-bit] Player Position
 Position = byte(0x25643C)
 
+// 0x25644C: [Float] In-Game LB Time Submission
+//           Race time that is used during victory screens and in-game leaderboard recordings.
+function FinalTime() => float(0x25644C) * 100
+
 // 0x256340: [Bitflag] [Boolean] Boat Smashed
 //           Turns true when bashing into rival boats, buoys, or passerby boats while boosting in any race
 function SmashCount() => prev(bit0(0x256340)) == 0 && bit0(0x256340) == 1
@@ -215,8 +219,7 @@ InRace = 0x00000000
 //           +0x191: Nile Adventure #1 Spot
 
 // 0x1FEE04: [Float] Final Race Time
-//           Stores final race time used in leaderboards right as the race finishes. Used for all tracks in the game.
-function FinalTime() => float(0x1FEE04) * 100
+//           Temp storage of final race time. Accurate to the timer in the top-left corner during gameplay
 
 // Achievements
 
