@@ -77,13 +77,13 @@ Boat = dword(0x2946F0)
 // 0x294BE0: [8-bit] Game Mode Select
 //           0x00: 1 Player
 //           0x01: 2 Player
-1P = byte(0x294BE0)
-function ModeCheck() => 1P == 0x00
+Players = byte(0x294BE0)
+function ModeCheck() => Single == 0x00
 
 // Race Details
 // 0x200AE0: [Bitflag] [Boolean] Race Finished Indicator
 //           Becomes true once player has successfully finished a race
-function Finish() => prev(bit0(0x200AE0)) == 0x00 && byte(0x200AE0) == 0x01
+function Finish() => prev(bit0(0x200AE0)) == 0x00 && bit0(0x200AE0) == 0x01
 
 // 0x256434: [Float] Speedometer
 //           Float value is always +65 more than what is reported on GUI
@@ -93,6 +93,8 @@ Position = byte(0x25643C)
 
 // 0x256340: [Bitflag] [Boolean] Boat Smashed
 //           Turns true when bashing into rival boats, buoys, or passerby boats while boosting in any race
+
+function SmashCount() => prev(bit0(0x256340)) == 0 && bit0(0x256340) == 1
 
 // 0x25657C: [8bit] Boat Status
 //           0x00: In Water
@@ -194,6 +196,7 @@ MainMenu = 0x8C076C88
 TrackSelect = 0x8C08EC8E
 BoatSelect = 0x8C08EE86
 Pause = 0x8C03F7BA
+InRace = 0x00000000
 
 // 0x1FE66C: [ASCII | 1121 Bytes] Leaderboard
 //           Leaderboard info for all tracks in the game. Updates in real time from file load.
@@ -216,151 +219,243 @@ Pause = 0x8C03F7BA
 achievement(
     title = "Thunder Park: Qualified",
     description = "Finish the Thunder Park race in 3rd place or above", 
-    points = 3, 
+    points = 2, 
     type="progression",
-    trigger = 1P_Check() &&
-    Track == ThunderPark &&
-    Position >= 3 &&
-    Finish()
+    trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == ThunderPark &&
+        Position <= 3 &&
+        Finish()
 )
 
 achievement(
     title = "Thunder Park Champion",
     description = "Finish the Thunder Park race in 1st", 
-    points = , 
+    points = 3, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == ThunderPark &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Lost Island: Qualified",
     description = "Finish the Lost Island race in 3rd place or above", 
-    points = , 
+    points = 3, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == LostIsland &&
+        Position <= 3 &&
+        Finish()
 )
 
 achievement(
     title = "Lost Island Champion",
     description = "Finish the Lost Island race in 1st place", 
-    points = , 
+    points = 5, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == LostIsland &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Arctic Circle: Qualified",
     description = "Finish the Arctic Circle race in 3rd place or above", 
-    points = , 
+    points = 3, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == ArcticCircle &&
+        Position <= 3 &&
+        Finish()
 )
 
 achievement(
     title = "Arctic Circle Champion",
     description = "Finish the Arctic Circle race in 1st place", 
-    points = , 
+    points = 5, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == ArcticCircle &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Greek Isles: Qualified",
     description = "Finish the Greek Isles race in 2nd place or above", 
-    points = , 
+    points = 5, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == GreekIsles &&
+        Position <= 2 &&
+        Finish()
 )
 
 achievement(
     title = "Greek Isles Champion",
     description = "Finish the Greek Isles race in 1st place", 
-    points = , 
+    points = 10, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == GreekIsles &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Lake Powell: Qualified",
     description = "Finish the Lake Powell race in 2nd place or above", 
-    points = , 
+    points = 5, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == LakePowell &&
+        Position <= 2 &&
+        Finish()
 )
 
 achievement(
     title = "Lake Powell Champion",
     description = "Finish the Lake Powell race in 1st place", 
-    points = , 
+    points = 10, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == LakePowell &&
+        Position == 1 &&
+        Finish()
 )
 
 
 achievement(
     title = "The Far East: Qualified",
     description = "Finish the Far East race in 2nd place or above", 
-    points = , 
+    points = 5, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == TheFarEast &&
+        Position <= 2 &&
+        Finish()
 )
 
 achievement(
     title = "The Far East Champion",
     description = "Finish the Far East race in 1st place", 
-    points = , 
+    points = 10, 
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == TheFarEast &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Ship Graveyard Champion",
     description = "Finish the Ship Graveyard race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == ShipGraveyard &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Venice Canals Champion",
     description = "Finish the Venice Canals race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == VeniceCanals &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "N.Y. Disaster Champion",
     description = "Finish the N.Y. Disaster race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == NYDisaster &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Castle Von Dandy Champion",
     description = "Finish the Castle Von Dandy race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == CastleVonDandy &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Catacomb Champion",
     description = "Finish the Catacomb race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == Catacomb &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Hydro Speedway Champion",
     description = "Finish the Hydro Speedway race in 1st place", 
-    points = , 
+    points = 10, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == HydroSpeedwayk &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
     title = "Nile Adventure Champion",
     description = "Finish the Nile Adventure race in 1st place", 
-    points = , 
+    points = 25, 
     type="progression",
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        Track == NileAdventure &&
+        Position == 1 &&
+        Finish()
 )
 
 achievement(
@@ -368,6 +463,10 @@ achievement(
     description = "Grab the boost on the bridge in Thunder Park", 
     points = 1, 
     trigger = 
+        ModeCheck() &&
+        never(Screen != InRace) &&
+        Track == ThunderPark &&
+        ThunderBoostGet()
 )
 
 achievement(
@@ -494,10 +593,12 @@ achievement(
 
 achievement(
     title = "Crazy Boat",
-    description = "Smash into your rivals 10 times in a single race", // If dynamic hit detection can be figured out
-    points = ,
-    trigger =
+    description = "Smash your boat into rivals, buyoys, or passerby 15 times in a single race",
+    points = 5,
+    trigger = 
+        measured(repeated(15, SmashCount()))
 )
+
 
 achievement(
     title = "",
