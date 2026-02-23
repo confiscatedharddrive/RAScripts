@@ -35,6 +35,21 @@
 //           0x8C294650: Catacomb
 //           0x8C294600: Hydro Speedway
 //           0x8C2945B0: Nile Adventure
+Track = dword(0x2942DC)
+
+ThunderPark = 0x8C2943D0
+LostIsland = 0x8C294420
+ArcticCircle = 0x8C294470
+GreekIsles = 0x8C294380
+LakePowell = 0x8C294330
+TheFarEast = 0x8C2942E0
+ShipGraveyard = 0x8C2944C0
+VeniceCanals = 0x8C294510
+NYDisaster = 0x8C294560
+CastleVonDandy = 0x8C2946A0
+Catacomb = 0x8C294650
+HydroSpeedway = 0x8C294600
+NileAdventure = 0x8C2945B0
 
 // 0x2946F0: [32-bit] Boat Selection
 //           Easy:
@@ -57,19 +72,24 @@
 //           0x8C294A90: Armed Response
 //           0x8C294A3C: Blowfish
 //           0x8C2949E8: Chumdinger
+Boat = dword(0x2946F0)
 
 // 0x294BE0: [8-bit] Game Mode Select
 //           0x00: 1 Player
 //           0x01: 2 Player
+1P = byte(0x294BE0)
+function ModeCheck() => 1P == 0x00
 
 // Race Details
 // 0x200AE0: [Bitflag] [Boolean] Race Finished Indicator
 //           Becomes true once player has successfully finished a race
+function Finish() => prev(bit0(0x200AE0)) == 0x00 && byte(0x200AE0) == 0x01
 
 // 0x256434: [Float] Speedometer
 //           Float value is always +65 more than what is reported on GUI
 
 // 0x25643C: [8-bit] Player Position
+Position = byte(0x25643C)
 
 // 0x256340: [Bitflag] [Boolean] Boat Smashed
 //           Turns true when bashing into rival boats, buoys, or passerby boats while boosting in any race
@@ -78,6 +98,9 @@
 //           0x00: In Water
 //           0x01: In Air
 //           0x02: Flipping Out
+Status = byte(0x25657C)
+
+Flipping = 0x02
 
 // 0x256630: [8-bit] Boost Speed
 //           0x1E: Max Boost
@@ -89,6 +112,7 @@
 //           0x06: End of race
 
 // 0x2597B8: [Float] Race Timer
+Time = float(0x2597B8)
 
 // Course-Specific Details
 // 0xD1E344: [Bitflag] [Boolean] Thunder Park Bridge Boost
@@ -163,6 +187,13 @@
 //           0x8C08EC8E: Track Selection Screen
 //           0x8C08EE86: Boat Selection Screen
 //           0x8C03F7BA: Pause Screen
+Screen = dword(0xD78E2C)
+
+Title = 0x8C076806
+MainMenu = 0x8C076C88
+TrackSelect = 0x8C08EC8E
+BoatSelect = 0x8C08EE86
+Pause = 0x8C03F7BA
 
 // 0x1FE66C: [ASCII | 1121 Bytes] Leaderboard
 //           Leaderboard info for all tracks in the game. Updates in real time from file load.
@@ -187,7 +218,10 @@ achievement(
     description = "Finish the Thunder Park race in 3rd place or above", 
     points = 3, 
     type="progression",
-    trigger = 
+    trigger = 1P_Check() &&
+    Track == ThunderPark &&
+    Position >= 3 &&
+    Finish()
 )
 
 achievement(
