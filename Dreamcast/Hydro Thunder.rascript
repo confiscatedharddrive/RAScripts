@@ -142,6 +142,8 @@ function LostIslandBoostGet() => prev(bit0(0xD27744)) == 0 && bit0(0xD27744) == 
 // 0xD201E4: [Bitflag] [Boolean] Arctic Circle Hidden Boost Behind Polar Bears
 
 // 0xD25984: [Bitflag] [Boolean] Arctic Circle Hidden Boost in Oil Tanker
+function ArcticCircleBoostGet() => measured(tally(2, once(prev(bit0(0xD201E4)) == 0 && bit0(0xD201E4) == 1),
+once(prev(bit0(0xD25984)) == 0 && bit0(0xD25984) == 1)))
 
 // 0x1FECC4: [Bitflag] [Boolean] Greek Isles First Waterfall Secret
 
@@ -497,8 +499,12 @@ achievement(
 achievement(
     title = "Ice Cold Tour",
     description = "Grab the polar bear boost and hidden boost in the Oil Tanker in Arctic Circle",
-    points = ,
+    points = 2,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == ArcticCircle &&
+        ArcticCircleBoostGet()
 )
 
 achievement(
