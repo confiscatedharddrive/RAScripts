@@ -78,12 +78,19 @@ Boat = dword(0x2946F0)
 //           0x00: 1 Player
 //           0x01: 2 Player
 Players = byte(0x294BE0)
-function ModeCheck() => Players == 0x00
+function ModeCheck() => Players == 0
 
 // Race Details
+// 0x1E0C9C: [Bitflag] [Boolean] In-Race Indicator
+//           Turns false at exact frame of results screen
+InRace = bit0(0x1E0C9C)
+
+True = 0x01
+function RaceEnd() => prev(bit0(0x1E0C9C)) == 1 && bit0(0x1E0C9C) == 0
+
 // 0x200AE0: [Bitflag] [Boolean] Race Finished Indicator
 //           Becomes true once player has successfully finished a race
-function Finish() => prev(bit0(0x200AE0)) == 0x00 && bit0(0x200AE0) == 0x01
+function Finish() => prev(bit0(0x200AE0)) == 0 && bit0(0x200AE0) == 1
 
 // 0x256434: [Float] Speedometer
 //           Float value is always +65 more than what is reported on GUI
@@ -121,14 +128,14 @@ Time = float(0x2597B8)
 
 // Course-Specific Details
 // 0xD1E344: [Bitflag] [Boolean] Thunder Park Bridge Boost
-function ThunderBoostGet() => prev(bit0(0xD1E344)) == 1 && bit0(0xD1E344) == 1
-
-// 0xD10670: [Bitflag] [Boolean] Collision with Tourist Boat in Lost Island
+function ThunderBoostGet() => prev(bit0(0xD1E344)) == 0 && bit0(0xD1E344) == 1
 
 // 0x1AE96C: [Bitflag] [Boolean] [Bitflag] [Boolean] Secret Passage Flag
 //           Used in Lost Island, Lake Powell, Ship Graveyard, Venice Canals
+function Secret() => prev(bit0(0x1AE96C)) == 0 && bit0(0x1AE96C) == 1
 
 // 0xD27744: [Bitflag] [Boolean] Lost Island Hidden Volcano Boost
+function LostIslandBoostGet() => prev(bit0(0xD27744)) == 0 && bit0(0xD27744) == 1
 
 // 0x1AE98C: [Bitflag] [Boolean] Arctic Circle Secret Ice Tunnel
 
@@ -193,6 +200,7 @@ function ThunderBoostGet() => prev(bit0(0xD1E344)) == 1 && bit0(0xD1E344) == 1
 //           0x8C08EC8E: Track Selection Screen
 //           0x8C08EE86: Boat Selection Screen
 //           0x8C03F7BA: Pause Screen
+//           0x00000000: In Race
 Screen = dword(0xD78E2C)
 
 Title = 0x8C076806
@@ -200,7 +208,6 @@ MainMenu = 0x8C076C88
 TrackSelect = 0x8C08EC8E
 BoatSelect = 0x8C08EE86
 Pause = 0x8C03F7BA
-InRace = 0x00000000
 
 // 0x1FE66C: [ASCII | 1121 Bytes] Leaderboard
 //           Leaderboard info for all tracks in the game. Updates in real time from file load.
@@ -230,9 +237,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == ThunderPark &&
         Position <= 3 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -242,9 +249,9 @@ achievement(
     points = 3, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == ThunderPark &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -255,9 +262,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == LostIsland &&
         Position <= 3 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -267,9 +274,9 @@ achievement(
     points = 5, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == LostIsland &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -280,9 +287,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == ArcticCircle &&
         Position <= 3 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -292,9 +299,9 @@ achievement(
     points = 5, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == ArcticCircle &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -305,9 +312,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == GreekIsles &&
         Position <= 2 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -317,9 +324,9 @@ achievement(
     points = 10, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == GreekIsles &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -330,9 +337,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == LakePowell &&
         Position <= 2 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -342,9 +349,9 @@ achievement(
     points = 10, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == LakePowell &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -356,9 +363,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == TheFarEast &&
         Position <= 2 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -368,9 +375,9 @@ achievement(
     points = 10, 
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == TheFarEast &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -381,9 +388,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == ShipGraveyard &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -394,9 +401,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == VeniceCanals &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -407,9 +414,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == NYDisaster &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -420,9 +427,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == CastleVonDandy &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -433,9 +440,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == Catacomb &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -446,9 +453,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == HydroSpeedway &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -459,9 +466,9 @@ achievement(
     type="progression",
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
         Track == NileAdventure &&
         Position == 1 &&
+        RaceEnd() &&
         Finish()
 )
 
@@ -471,7 +478,7 @@ achievement(
     points = 1, 
     trigger = 
         ModeCheck() &&
-        never(Screen != InRace) &&
+        InRace == True &&
         Track == ThunderPark &&
         ThunderBoostGet()
 )
@@ -479,8 +486,12 @@ achievement(
 achievement(
     title = "Scorched Skipper",
     description = "Grab the hidden boost in the volcano in Lost Island",
-    points = ,
+    points = 1,
     trigger =
+        ModeCheck() &&
+        InRace == True &&
+        Track == LostIsland &&
+        LostIslandBoostGet()
 )
 
 achievement(
@@ -604,8 +615,7 @@ achievement(
     points = 5,
     trigger = 
         ModeCheck() &&
-        Screen == InRace &&
-        never(Screen != InRace) &&
+        never(InRace != True) &&
         measured(repeated(15, SmashCount()))
 )
 
@@ -625,8 +635,8 @@ leaderboard(
     description = "Finish Thunder Park as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == ThunderPark &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -642,8 +652,8 @@ leaderboard(
     description = "Finish Lost Island as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == LostIsland &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -659,8 +669,8 @@ leaderboard(
     description = "Finish Arctic Circle as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == ArcticCircle &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -676,8 +686,8 @@ leaderboard(
     description = "Finish Greek Isles as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == GreekIsles &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -693,8 +703,8 @@ leaderboard(
     description = "Finish Lake Powell as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == LakePowell &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -710,8 +720,8 @@ leaderboard(
     description = "Finish The Far East as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == TheFarEast &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -727,8 +737,8 @@ leaderboard(
     description = "Finish Ship Graveyard as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == ShipGraveyard &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -744,8 +754,8 @@ leaderboard(
     description = "Finish Venice Canals as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == VeniceCanals &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -761,8 +771,8 @@ leaderboard(
     description = "Finish N.Y. Disaster as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == NYDisaster &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -778,8 +788,8 @@ leaderboard(
     description = "Finish Catacomb as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == Catacomb &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -795,8 +805,8 @@ leaderboard(
     description = "Finish Hydro Speedway as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == HydroSpeedway &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -812,8 +822,8 @@ leaderboard(
     description = "Finish Castle Von Dandy as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == CastleVonDandy &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
@@ -829,8 +839,8 @@ leaderboard(
     description = "Finish Nile Adventure as fast as possible!",
     start  = 
             ModeCheck() &&
-            Screen == InRace &&
             Track == NileAdventure &&
+            RaceEnd() &&
             Finish(),
     cancel = 
             always_false(),
