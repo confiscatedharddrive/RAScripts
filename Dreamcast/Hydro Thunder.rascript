@@ -631,7 +631,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -648,7 +648,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -665,7 +665,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -682,7 +682,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -699,7 +699,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -716,7 +716,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -733,7 +733,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -750,7 +750,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -767,7 +767,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -784,7 +784,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -801,7 +801,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -818,7 +818,7 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
 
 leaderboard(
@@ -835,5 +835,5 @@ leaderboard(
             always_true(),
     value  = 
             measured(FinalTime()),
-    format = "CENTISECONDS", lower_is_better = true
+    format = "MILLISECS", lower_is_better = true
 )
