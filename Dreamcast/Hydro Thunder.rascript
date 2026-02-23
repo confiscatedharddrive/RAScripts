@@ -78,7 +78,7 @@ Boat = dword(0x2946F0)
 //           0x00: 1 Player
 //           0x01: 2 Player
 Players = byte(0x294BE0)
-function ModeCheck() => Single == 0x00
+function ModeCheck() => Players == 0x00
 
 // Race Details
 // 0x200AE0: [Bitflag] [Boolean] Race Finished Indicator
@@ -93,7 +93,6 @@ Position = byte(0x25643C)
 
 // 0x256340: [Bitflag] [Boolean] Boat Smashed
 //           Turns true when bashing into rival boats, buoys, or passerby boats while boosting in any race
-
 function SmashCount() => prev(bit0(0x256340)) == 0 && bit0(0x256340) == 1
 
 // 0x25657C: [8bit] Boat Status
@@ -118,6 +117,7 @@ Time = float(0x2597B8)
 
 // Course-Specific Details
 // 0xD1E344: [Bitflag] [Boolean] Thunder Park Bridge Boost
+function ThunderBoostGet() => prev(bit0(0xD1E344)) == 1 && bit0(0xD1E344) == 1
 
 // 0xD10670: [Bitflag] [Boolean] Collision with Tourist Boat in Lost Island
 
@@ -213,6 +213,10 @@ InRace = 0x00000000
 //           +0x411: Catacomb #1 Spot
 //           +0x371: Hydro Speedway #1 Spot
 //           +0x191: Nile Adventure #1 Spot
+
+// 0x1FEE04: [Float] Final Race Time
+//           Stores final race time used in leaderboards right as the race finishes. Used for all tracks in the game.
+function FinalTime() => float(0x1FEE04) * 100
 
 // Achievements
 
@@ -440,7 +444,7 @@ achievement(
     trigger = 
         ModeCheck() &&
         Screen == InRace &&
-        Track == HydroSpeedwayk &&
+        Track == HydroSpeedway &&
         Position == 1 &&
         Finish()
 )
@@ -596,6 +600,9 @@ achievement(
     description = "Smash your boat into rivals, buyoys, or passerby 15 times in a single race",
     points = 5,
     trigger = 
+        ModeCheck() &&
+        Screen == InRace &&
+        never(Screen != InRace) &&
         measured(repeated(15, SmashCount()))
 )
 
@@ -614,128 +621,219 @@ leaderboard(
     title = "H.T.R.A. Ambassador - Thunder Park",
     description = "Finish Thunder Park as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == ThunderPark &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Lost Island",
     description = "Finish Lost Island as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == LostIsland &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Arctic Circle",
     description = "Finish Arctic Circle as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == ArcticCircle &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Greek Isles",
     description = "Finish Greek Isles as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == GreekIsles &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Lake Powell",
     description = "Finish Lake Powell as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == LakePowell &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - The Far East",
     description = "Finish The Far East as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == TheFarEast &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Ship Graveyard",
     description = "Finish Ship Graveyard as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == ShipGraveyard &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Venice Canals",
     description = "Finish Venice Canals as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == VeniceCanals &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - N.Y. Disaster",
     description = "Finish N.Y. Disaster as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == NYDisaster &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Catacomb",
     description = "Finish Catacomb as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == Catacomb &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Hydro Speedway",
     description = "Finish Hydro Speedway as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == HydroSpeedway &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Castle Von Dandy",
     description = "Finish Castle Von Dandy as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == CastleVonDandy &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
 
 leaderboard(
     title = "H.T.R.A. Ambassador - Nile Adventure",
     description = "Finish Nile Adventure as fast as possible!",
     start  = 
+            ModeCheck() &&
+            Screen == InRace &&
+            Track == NileAdventure &&
+            Finish(),
     cancel = 
+            always_false(),
     submit = 
+            always_true(),
     value  = 
-    format = "SECONDS", lower_is_better = true
+            measured(FinalTime()),
+    format = "CENTISECONDS", lower_is_better = true
 )
