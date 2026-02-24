@@ -233,8 +233,6 @@ once(Track == CastleVonDandy && prev(bit0(0xD33864)) == 0 && bit0(0xD33864) == 1
 function NileAdventureBoostGet() => measured(tally(2, once(Track == NileAdventure && prev(bit0(0xD0A0A4)) == 0 && bit0(0xD0A0A4) == 1),
 once(Track == NileAdventure && prev(bit0(0xD10382)) == 0 && bit0(0xD10382) == 1)))
 
-
-
 // 0xD78E2C: [24-bit] Game Screen
 //           0x076806: Title Screen
 //           0x076C88: Main Menu
