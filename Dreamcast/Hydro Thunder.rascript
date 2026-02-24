@@ -157,14 +157,14 @@ function LostIslandBoostGet() => prev(bit0(0xD27744)) == 0 && bit0(0xD27744) == 
 // 0xD201E4: [Bitflag] [Boolean] Arctic Circle Hidden Boost Behind Polar Bears
 
 // 0xD25984: [Bitflag] [Boolean] Arctic Circle Hidden Boost in Oil Tanker
-function ArcticCircleBoostGet() => measured(tally(2, once(prev(bit0(0xD201E4)) == 0 && bit0(0xD201E4) == 1),
-once(prev(bit0(0xD25984)) == 0 && bit0(0xD25984) == 1)))
+function ArcticCircleBoostGet() => measured(tally(2, once(Track == ArcticCircle && prev(bit0(0xD201E4)) == 0 && bit0(0xD201E4) == 1),
+once(Track == ArcticCircle && prev(bit0(0xD25984)) == 0 && bit0(0xD25984) == 1)))
 
 // 0x1FECC4: [Bitflag] [Boolean] Greek Isles First Waterfall Secret
 
 // 0xD31BA4: [Bitflag] [Boolean] Greek Isles +9 Boost on Second Waterfall
-function GreekIslesBoostGet() => measured(tally(2, once(prev(bit0(0x1FECC4)) == 0 && bit0(0x1FECC4) == 1),
-once(prev(bit0(0xD31BA4)) == 0 && bit0(0xD31BA4) == 1)))
+function GreekIslesBoostGet() => measured(tally(2, once(Track == GreekIsles && prev(bit0(0x1FECC4)) == 0 && bit0(0x1FECC4) == 1),
+once(Track == GreekIsles && prev(bit0(0xD31BA4)) == 0 && bit0(0xD31BA4) == 1)))
 
 // 0xD0C464: [Bitflag] [Boolean] Lake Powell Starting Ramp Boost
 
@@ -173,8 +173,8 @@ once(prev(bit0(0xD31BA4)) == 0 && bit0(0xD31BA4) == 1)))
 // 0xD1D264: [Bitflag] [Boolean] Lake Powell Second Cave Hidden Boost
 
 // 0xD0BC24: [Bitflag] [Boolean] Lake Powell Police Bridge Boost
-function LakePowellBoostGet() => measured(tally(2, once(prev(bit0(0xD1D264)) == 0 && bit0(0xD1D264) == 1),
-once(prev(bit0(0xD0BC24)) == 0 && bit0(0xD0BC24) == 1)))
+function LakePowellBoostGet() => measured(tally(2, once(Track == LakePowell && prev(bit0(0xD1D264)) == 0 && bit0(0xD1D264) == 1),
+once(Track == LakePowell && prev(bit0(0xD0BC24)) == 0 && bit0(0xD0BC24) == 1)))
 
 // 0xD12804: [Bitflag] [Boolean] The Far East Secret Starter Area Boost
 function FarEastSuperBoostGet() => prev(bit0(0xD12804)) == 0 && bit0(0xD12804) == 1
@@ -187,30 +187,33 @@ function FarEastBoostGet() => prev(bit0(0xD11CA4)) == 0 && bit0(0xD11CA4) == 1
 // 0xD125C4: [Bitflag] [Boolean] Ship Graveyard Second Waterfall Boost Pickup #1
 
 // 0xD122A4: [Bitflag] [Boolean] Ship Graveyard Second Waterfall Boost Pickup #2
-function ShipGraveyardBoostGet() => measured(tally(3, once(prev(bit0(0xD22164)) == 0 && bit0(0xD22164) == 1),
-once(prev(bit0(0xD125C4)) == 0 && bit0(0xD125C4) == 1), once(prev(bit0(0xD122A4)) == 0 && bit0(0xD122A4) == 1)))
+function ShipGraveyardBoostGet() => measured(tally(3, once(Track == ShipGraveyard && prev(bit0(0xD22164)) == 0 && bit0(0xD22164) == 1),
+once(Track == ShipGraveyard && prev(bit0(0xD125C4)) == 0 && bit0(0xD125C4) == 1), 
+once(Track == ShipGraveyard && prev(bit0(0xD122A4)) == 0 && bit0(0xD122A4) == 1)))
 
 // 0xD1FDC4: [Bitflag] [Boolean] Venice Canals Boost Under Yellow Turning Lights
 
 // 0xD15324: [Bitflag] [Boolean] Venice Canals Boost Between Buildings
 
 // 0xD1CDA4: [Bitflag] [Boolean] Venice Canals Hidden Boost Pickup
-function VeniceCanalsBoostGet() => measured(tally(3, once(prev(bit0(0xD1FDC4)) == 0 && bit0(0xD1FDC4) == 1),
-once(prev(bit0(0xD15324)) == 0 && bit0(0xD15324) == 1), once(prev(bit0(0xD1CDA4)) == 0 && bit0(0xD1CDA4) == 1)))
+function VeniceCanalsBoostGet() => measured(tally(3, once(Track == VeniceCanals && prev(bit0(0xD1FDC4)) == 0 && bit0(0xD1FDC4) == 1),
+once(Track == VeniceCanals && prev(bit0(0xD15324)) == 0 && bit0(0xD15324) == 1), 
+once(Track == VeniceCanals && prev(bit0(0xD1CDA4)) == 0 && bit0(0xD1CDA4) == 1)))
 
 // 0xD28824: [Bitflag] [Boolean] N.Y. Disaster Hidden Passage Boost
 
 // 0xD21124: [Bitflag] [Boolean] N.Y. Disaster Subway +9 Boost
-function NYDisasterBoostGet() => measured(tally(2, once(prev(bit0(0xD21124)) == 0 && bit0(0xD21124) == 1),
-once(prev(bit0(0xD28824)) == 0 && bit0(0xD28824) == 1)))
+function NYDisasterBoostGet() => measured(tally(2, once(Track == NYDisaster && prev(bit0(0xD21124)) == 0 && bit0(0xD21124) == 1),
+once(Track == NYDisaster && prev(bit0(0xD28824)) == 0 && bit0(0xD28824) == 1)))
 
 // 0xD371A4: [Bitflag] [Boolean] Catacomb Hidden Boost
 
 // 0xD33944: [Bitflag] [Boolean] Catacomb Alcove Hidden Boost
 
 // 0xD32284: [Bitflag] [Boolean] Catacomb +9 Boost Near Pirate Ship
-function CatacombBoostGet() => measured(tally(3, once(prev(bit0(0xD371A4)) == 0 && bit0(0xD371A4) == 1),
-once(prev(bit0(0xD33944)) == 0 && bit0(0xD33944) == 1), once(prev(bit0(0xD32284)) == 0 && bit0(0xD32284) == 1)))
+function CatacombBoostGet() => measured(tally(3, once(Track == Catacomb && prev(bit0(0xD371A4)) == 0 && bit0(0xD371A4) == 1),
+once(Track == Catacomb && prev(bit0(0xD33944)) == 0 && bit0(0xD33944) == 1), 
+once(Track == Catacomb && prev(bit0(0xD32284)) == 0 && bit0(0xD32284) == 1)))
 
 // 0xCF4864: [Bitflag] [Boolean] Hydro Speedway Hidden Boost
 function HydroSpeedwayBoostGet() => prev(bit0(0xCF4864)) == 0 && bit0(0xCF4864) == 1
@@ -220,14 +223,15 @@ function HydroSpeedwayBoostGet() => prev(bit0(0xCF4864)) == 0 && bit0(0xCF4864) 
 // 0xD31DA4: [Bitflag] [Boolean] Castle Von Dandy Graveyard Hidden Boost
 
 // 0xD33864: [Bitflag] [Boolean] Castle Von Dandy Window Hidden Boost
-function CastleVonDandyBoostGet() => measured(tally(3, once(prev(bit0(0xD35C84)) == 0 && bit0(0xD35C84) == 1),
-once(prev(bit0(0xD31DA4)) == 0 && bit0(0xD31DA4) == 1), once(prev(bit0(0xD33864)) == 0 && bit0(0xD33864) == 1)))
+function CastleVonDandyBoostGet() => measured(tally(3, once(Track == CastleVonDandy && prev(bit0(0xD35C84)) == 0 && bit0(0xD35C84) == 1),
+once(Track == CastleVonDandy && prev(bit0(0xD31DA4)) == 0 && bit0(0xD31DA4) == 1), 
+once(Track == CastleVonDandy && prev(bit0(0xD33864)) == 0 && bit0(0xD33864) == 1)))
 
 // 0xD0A0A4: [Bitflag] [Boolean] Nile Adventure Hidden Boost
 
 // 0xD10382: [Bitflag] [Boolean] Nile Adventure Mummy Shortcut Hidden Boost
-function NileAdventureBoostGet() => measured(tally(2, once(prev(bit0(0xD0A0A4)) == 0 && bit0(0xD0A0A4) == 1),
-once(prev(bit0(0xD10382)) == 0 && bit0(0xD10382) == 1)))
+function NileAdventureBoostGet() => measured(tally(2, once(Track == NileAdventure && prev(bit0(0xD0A0A4)) == 0 && bit0(0xD0A0A4) == 1),
+once(Track == NileAdventure && prev(bit0(0xD10382)) == 0 && bit0(0xD10382) == 1)))
 
 
 
@@ -392,7 +396,6 @@ achievement(
         Finish()
 )
 
-
 achievement(
     title = "The Far East: Qualified",
     description = "Finish the Far East race in 2nd place or above", 
@@ -538,7 +541,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == ArcticCircle &&
         ArcticCircleBoostGet()
 )
 
@@ -549,7 +551,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == GreekIsles &&
         GreekIslesBoostGet()
 )
 
@@ -560,7 +561,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == LakePowell &&
         LakePowellBoostGet()
 )
 
@@ -594,10 +594,8 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == ShipGraveyard &&
         ShipGraveyardBoostGet()
 )
-
 
 achievement(
     title = "The (Speedy) Scenic Route",
@@ -607,7 +605,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == VeniceCanals &&
         VeniceCanalsBoostGet() &&
         Secret()
 )
@@ -619,7 +616,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == NYDisaster &&
         NYDisasterBoostGet()
 )
 
@@ -630,7 +626,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == Catacomb &&
         CatacombBoostGet()
 )
 
@@ -653,7 +648,6 @@ achievement(
         ModeCheck() &&
         never(InRace != True) &&
         never(Status == Flipping) &&
-        Track == CastleVonDandy &&
         CastleVonDandyBoostGet()
 )
 
@@ -664,7 +658,6 @@ achievement(
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
-        Track == NileAdventure &&
         NileAdventureBoostGet()
 )
 
@@ -696,7 +689,6 @@ achievement(
     trigger =
 )
 
-
 achievement(
     title = "Crazy Boat",
     description = "Smash your boat into rivals, buyoys, or passerby 15 times in a single race",
@@ -706,7 +698,6 @@ achievement(
         never(InRace != True) &&
         measured(repeated(15, SmashCount()))
 )
-
 
 achievement(
     title = "Inverse Relations",
