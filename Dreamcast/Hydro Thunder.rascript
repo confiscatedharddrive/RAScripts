@@ -6,73 +6,78 @@
 // Code Notes
 
 // This game uses pointers for much of its memory. Many of these pointers are used in place of static memory,
-// and can be used as such. These memory addresses will be thus noted as the 32-bit pointer values they are (8cxxxxxx),
+// and can be used as such. These memory addresses will be thus noted as the 24-bit pointer values they are (8cxxxxxx),
 // while still behaving the same as a static value. An exception is made for track data. Starting roughly from 0xd10500
 // and ending roughly around 0xD77610 there is a heap where most track data is dynamically allocated. One exception is
 // Hydro Speedway, as that specific track moves the heap up by roughly 10,000. Track data varies in the heap, but is always 
 // consistent with each playthrough of said track (eg. Thunder Park has specific allocations, Lost Island has others).
 
 // Selection Details
-// 0x2942DC: [32-bit] Track Selection
+// 0x2942DC: [24-bit] Track Selection
 
 //           Easy:
-//           0x8C2943D0: Thunder Park
-//           0x8C294420: Lost Island
-//           0x8C294470: Arctic Circle
+//           0x2943D0: Thunder Park
+//           0x294420: Lost Island
+//           0x294470: Arctic Circle
 
 //           Medium:
-//           0x8C294380: Greek Isles
-//           0x8C294330: Lake Powell
-//           0x8C2942E0: The Far East
+//           0x294380: Greek Isles
+//           0x294330: Lake Powell
+//           0x2942E0: The Far East
 
 //           Hard:
-//           0x8C2944C0: Ship Graveyard
-//           0x8C294510: Venice Canals
-//           0x8C294560: N.Y. Disaster
+//           0x2944C0: Ship Graveyard
+//           0x294510: Venice Canals
+//           0x294560: N.Y. Disaster
 
 //           Bonus:
-//           0x8C2946A0: Castle Von Dandy
-//           0x8C294650: Catacomb
-//           0x8C294600: Hydro Speedway
-//           0x8C2945B0: Nile Adventure
-Track = dword(0x2942DC)
+//           0x2946A0: Castle Von Dandy
+//           0x294650: Catacomb
+//           0x294600: Hydro Speedway
+//           0x2945B0: Nile Adventure
+Track = tbyte(0x2942DC)
 
-ThunderPark = 0x8C2943D0
-LostIsland = 0x8C294420
-ArcticCircle = 0x8C294470
-GreekIsles = 0x8C294380
-LakePowell = 0x8C294330
-TheFarEast = 0x8C2942E0
-ShipGraveyard = 0x8C2944C0
-VeniceCanals = 0x8C294510
-NYDisaster = 0x8C294560
-CastleVonDandy = 0x8C2946A0
-Catacomb = 0x8C294650
-HydroSpeedway = 0x8C294600
-NileAdventure = 0x8C2945B0
+ThunderPark = 0x2943D0
+LostIsland = 0x294420
+ArcticCircle = 0x294470
+GreekIsles = 0x294380
+LakePowell = 0x294330
+TheFarEast = 0x2942E0
+ShipGraveyard = 0x2944C0
+VeniceCanals = 0x294510
+NYDisaster = 0x294560
+CastleVonDandy = 0x2946A0
+Catacomb = 0x294650
+HydroSpeedway = 0x294600
+NileAdventure = 0x2945B0
 
-// 0x2946F0: [32-bit] Boat Selection
+// 0x2946F0: [24-bit] Boat Selection
 //           Easy:
-//           0x8C2947F0: Damn the Torpedoes
-//           0x8C294844: Midway
-//           0x8C294898: Miss Behave
+//           0x2947F0: Damn the Torpedoes
+//           0x294844: Midway
+//           0x294898: Miss Behave
 
 //           Medium:
-//           0x8C29479C: Banshee
-//           0x8C294748: Tidal Blade
-//           0x8C2946f4: Thresher
+//           0x29479C: Banshee
+//           0x294748: Tidal Blade
+//           0x2946f4: Thresher
 
 //           Hard:
-//           0x8C2948EC: Cutthroat
-//           0x8C294940: Rad Hazard
-//           0x8C294994: Razorback
+//           0x2948EC: Cutthroat
+//           0x294940: Rad Hazard
+//           0x294994: Razorback
 
 //           Bonus:
-//           0x8C294AE4: Tinytanic
-//           0x8C294A90: Armed Response
-//           0x8C294A3C: Blowfish
-//           0x8C2949E8: Chumdinger
-Boat = dword(0x2946F0)
+//           0x294AE4: Tinytanic
+//           0x294A90: Armed Response
+//           0x294A3C: Blowfish
+//           0x2949E8: Chumdinger
+Boat = tbyte(0x2946F0)
+
+Tinytanic = 0x294AE4
+ArmedResponse = 0x294A90
+Blowfish = 0x294A3C
+Chumdinger = 0x2949E8
 
 // 0x294BE0: [8-bit] Game Mode Select
 //           0x00: 1 Player
@@ -81,12 +86,22 @@ Players = byte(0x294BE0)
 function ModeCheck() => Players == 0
 
 // Race Details
+
 // 0x1E0C9C: [Bitflag] [Boolean] In-Race Indicator
 //           Turns false at exact frame of results screen
 InRace = bit0(0x1E0C9C)
 
 True = 0x01
 function RaceEnd() => prev(bit0(0x1E0C9C)) == 1 && bit0(0x1E0C9C) == 0
+
+// 0x1FC98C: [8-bit] Camera Mode
+//           0x00: First Person
+//           0x01: Default
+//           0x02: Wide View
+Camera = 0x1FC98C
+
+FirstPerson = 0x00
+function ViewCheck() => unless(repeated(x, once(Camera != FirstPerson))) // Add frame count until countdown ends as buffer to switch modes
 
 // 0x200AE0: [Bitflag] [Boolean] Race Finished Indicator
 //           Becomes true once player has successfully finished a race
@@ -148,6 +163,8 @@ once(prev(bit0(0xD25984)) == 0 && bit0(0xD25984) == 1)))
 // 0x1FECC4: [Bitflag] [Boolean] Greek Isles First Waterfall Secret
 
 // 0xD31BA4: [Bitflag] [Boolean] Greek Isles +9 Boost on Second Waterfall
+function GreekIslesBoostGet() => measured(tally(2, once(prev(bit0(0x1FECC4)) == 0 && bit0(0x1FECC4) == 1),
+once(prev(bit0(0xD31BA4)) == 0 && bit0(0xD31BA4) == 1)))
 
 // 0xD0C464: [Bitflag] [Boolean] Lake Powell Starting Ramp Boost
 
@@ -156,60 +173,78 @@ once(prev(bit0(0xD25984)) == 0 && bit0(0xD25984) == 1)))
 // 0xD1D264: [Bitflag] [Boolean] Lake Powell Second Cave Hidden Boost
 
 // 0xD0BC24: [Bitflag] [Boolean] Lake Powell Police Bridge Boost
+function LakePowellBoostGet() => measured(tally(2, once(prev(bit0(0xD1D264)) == 0 && bit0(0xD1D264) == 1),
+once(prev(bit0(0xD0BC24)) == 0 && bit0(0xD0BC24) == 1)))
 
 // 0xD12804: [Bitflag] [Boolean] The Far East Secret Starter Area Boost
+function FarEastSuperBoostGet() => prev(bit0(0xD12804)) == 0 && bit0(0xD12804) == 1
 
 // 0xD11CA4: [Bitflag] [Boolean] The Far East Hidden Boat Boost
+function FarEastBoostGet() => prev(bit0(0xD11CA4)) == 0 && bit0(0xD11CA4) == 1
 
 // 0xD22164: [Bitflag] [Boolean] Ship Graveyard Cabin Hidden Boost
 
 // 0xD125C4: [Bitflag] [Boolean] Ship Graveyard Second Waterfall Boost Pickup #1
 
 // 0xD122A4: [Bitflag] [Boolean] Ship Graveyard Second Waterfall Boost Pickup #2
+function ShipGraveyardBoostGet() => measured(tally(3, once(prev(bit0(0xD22164)) == 0 && bit0(0xD22164) == 1),
+once(prev(bit0(0xD125C4)) == 0 && bit0(0xD125C4) == 1), once(prev(bit0(0xD122A4)) == 0 && bit0(0xD122A4) == 1)))
 
 // 0xD1FDC4: [Bitflag] [Boolean] Venice Canals Boost Under Yellow Turning Lights
 
 // 0xD15324: [Bitflag] [Boolean] Venice Canals Boost Between Buildings
 
 // 0xD1CDA4: [Bitflag] [Boolean] Venice Canals Hidden Boost Pickup
+function VeniceCanalsBoostGet() => measured(tally(3, once(prev(bit0(0xD1FDC4)) == 0 && bit0(0xD1FDC4) == 1),
+once(prev(bit0(0xD15324)) == 0 && bit0(0xD15324) == 1), once(prev(bit0(0xD1CDA4)) == 0 && bit0(0xD1CDA4) == 1)))
 
 // 0xD28824: [Bitflag] [Boolean] N.Y. Disaster Hidden Passage Boost
 
 // 0xD21124: [Bitflag] [Boolean] N.Y. Disaster Subway +9 Boost
+function NYDisasterBoostGet() => measured(tally(2, once(prev(bit0(0xD21124)) == 0 && bit0(0xD21124) == 1),
+once(prev(bit0(0xD28824)) == 0 && bit0(0xD28824) == 1)))
 
 // 0xD371A4: [Bitflag] [Boolean] Catacomb Hidden Boost
 
 // 0xD33944: [Bitflag] [Boolean] Catacomb Alcove Hidden Boost
 
 // 0xD32284: [Bitflag] [Boolean] Catacomb +9 Boost Near Pirate Ship
+function CatacombBoostGet() => measured(tally(3, once(prev(bit0(0xD371A4)) == 0 && bit0(0xD371A4) == 1),
+once(prev(bit0(0xD33944)) == 0 && bit0(0xD33944) == 1), once(prev(bit0(0xD32284)) == 0 && bit0(0xD32284) == 1)))
 
 // 0xCF4864: [Bitflag] [Boolean] Hydro Speedway Hidden Boost
+function HydroSpeedwayBoostGet() => prev(bit0(0xCF4864)) == 0 && bit0(0xCF4864) == 1
 
 // 0xD35C84: [Bitflag] [Boolean] Castle Von Dandy Bell Hidden Boost
 
 // 0xD31DA4: [Bitflag] [Boolean] Castle Von Dandy Graveyard Hidden Boost
 
 // 0xD33864: [Bitflag] [Boolean] Castle Von Dandy Window Hidden Boost
+function CastleVonDandyBoostGet() => measured(tally(3, once(prev(bit0(0xD35C84)) == 0 && bit0(0xD35C84) == 1),
+once(prev(bit0(0xD31DA4)) == 0 && bit0(0xD31DA4) == 1), once(prev(bit0(0xD33864)) == 0 && bit0(0xD33864) == 1)))
 
 // 0xD0A0A4: [Bitflag] [Boolean] Nile Adventure Hidden Boost
 
 // 0xD10382: [Bitflag] [Boolean] Nile Adventure Mummy Shortcut Hidden Boost
+function NileAdventureBoostGet() => measured(tally(2, once(prev(bit0(0xD0A0A4)) == 0 && bit0(0xD0A0A4) == 1),
+once(prev(bit0(0xD10382)) == 0 && bit0(0xD10382) == 1)))
 
 
-// 0xD78E2C: [32-bit] Game Screen
-//           0x8C076806: Title Screen
-//           0x8C076C88: Main Menu
-//           0x8C08EC8E: Track Selection Screen
-//           0x8C08EE86: Boat Selection Screen
-//           0x8C03F7BA: Pause Screen
-//           0x00000000: In Race
-Screen = dword(0xD78E2C)
 
-Title = 0x8C076806
-MainMenu = 0x8C076C88
-TrackSelect = 0x8C08EC8E
-BoatSelect = 0x8C08EE86
-Pause = 0x8C03F7BA
+// 0xD78E2C: [24-bit] Game Screen
+//           0x076806: Title Screen
+//           0x076C88: Main Menu
+//           0x08EC8E: Track Selection Screen
+//           0x08EE86: Boat Selection Screen
+//           0x03F7BA: Pause Screen/Leaderboard
+//           0x000000: In Race
+Screen = tbyte(0xD78E2C)
+
+Title = 0x076806
+MainMenu = 0x076C88
+TrackSelect = 0x08EC8E
+BoatSelect = 0x08EE86
+Pause = 0x03F7BA
 
 // 0x1FE66C: [ASCII | 1121 Bytes] Leaderboard
 //           Leaderboard info for all tracks in the game. Updates in real time from file load.
@@ -510,15 +545,23 @@ achievement(
 achievement(
     title = "Always Look Behind Waterfalls",
     description = "Grab the hidden waterfall boost and the second waterfall boost in Greek Isles",
-    points = ,
+    points = 2,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == GreekIsles &&
+        GreekIslesBoostGet()
 )
 
 achievement(
     title = "Utah's Most Wanted",
     description = "Grab the hidden boost in the cave and the boost off the police bridge in Lake Powell",
-    points = ,
+    points = 2,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == LakePowell &&
+        LakePowellBoostGet()
 )
 
 achievement(
@@ -526,20 +569,33 @@ achievement(
     description = "Grab the hidden boost in the cave at the start of The Far East", 
     points = 10, 
     trigger = 
+        ModeCheck() &&
+        InRace == True &&
+        Track == TheFarEast &&
+        FarEastSuperBoostGet()
 )
 
 achievement(
     title = "Dragon Boat Dance",
     description = "Grab the hidden boost in the Dragon Boat whilst doing a flip in The Far East",
-    points = ,
+    points = 3,
     trigger =
+        ModeCheck() &&
+        InRace == True &&
+        Track == TheFarEast &&
+        Status == Flipping &&
+        FarEastBoostGet()
 )
 
 achievement(
     title = "Ship Graveyard Crash Tour",
     description = "Grab the hidden boost in the Cabin and both boosts in the second waterfall in Ship Graveyard",
-    points = ,
+    points = 2,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == ShipGraveyard &&
+        ShipGraveyardBoostGet()
 )
 
 
@@ -547,70 +603,96 @@ achievement(
     title = "The (Speedy) Scenic Route",
     description = "Grab the +4 boost behind the yellow turning lights, the +9 boost between the buildings, the hidden chandelier boost,
                    and take the shortcut in the sewers in Venice Canals",
-    points = ,
+    points = 4,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == VeniceCanals &&
+        VeniceCanalsBoostGet() &&
+        Secret()
 )
 
 achievement(
     title = "New York Tricks",
     description = "Grab the +9 boost in the hidden passageway and the boost on the subway platform in N.Y. Disaster",
-    points = ,
+    points = 3,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == NYDisaster &&
+        NYDisasterBoostGet()
 )
 
 achievement(
     title = "Catacomb Explorer",
     description = "Grab both hidden boosts and the +9 boost near the pirate ship in Catacomb",
-    points = ,
+    points = 4,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == Catacomb &&
+        CatacombBoostGet()
 )
 
 achievement(
     title = "Take the Bait",
     description = "Grab the hidden boost in Hydro Speedway",
-    points = ,
+    points = 1,
     trigger =
+        ModeCheck() &&
+        InRace == True &&
+        Track == HydroSpeedway &&
+        HydroSpeedwayBoostGet()
 )
 
 achievement(
     title = "A Royal Pain",
     description = "Grab all 3 hidden boosts in Castle Von Dandy without flipping the boat",
-    points = ,
+    points = 5,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        never(Status == Flipping) &&
+        Track == CastleVonDandy &&
+        CastleVonDandyBoostGet()
 )
 
 achievement(
     title = "Tomb Racer",
     description = "Grab both +9 hidden boosts in Nile Adventure",
-    points = ,
+    points = 10,
     trigger =
+        ModeCheck() &&
+        never(InRace != True) &&
+        Track == NileAdventure &&
+        NileAdventureBoostGet()
 )
 
 achievement(
     title = "Speedy Breezy",
     description = "Win 3rd place or higher on any Easy race in first person mode",
-    points = ,
+    points = 3,
     trigger =
 )
 
 achievement(
     title = "Cruisin' On",
     description = "Win 3rd place or higher on any Medium race in first person mode",
-    points = ,
+    points = 4,
     trigger =
 )
 
 achievement(
     title = "Rough Waves",
     description = "Win 3rd place or higher on any Hard race in first person mode",
-    points = ,
+    points = 5,
     trigger =
 )
 
 achievement(
     title = "Sea Sickness",
     description = "Win 3rd place or higher on any Bonus race in first person mode",
-    points = ,
+    points = 10,
     trigger =
 )
 
@@ -627,12 +709,32 @@ achievement(
 
 
 achievement(
-    title = "",
-    description = "",
+    title = "Inverse Relations",
+    description = "Finish the Arctic Circle Race in 1st place using the Tinytanic boat",
     points = ,
     trigger =
 )
 
+achievement(
+    title = "Survivorship Bias",
+    description = "Finish the N.Y. Disaster Race in 1st place using the Blowfish boat",
+    points = ,
+    trigger =
+)
+
+achievement(
+    title = "Dog Day Afternoon",
+    description = "Finish the Nile Adventure Race in 1st place using the Chumdinger boat",
+    points = ,
+    trigger =
+)
+
+achievement(
+    title = "Turncoat Boat",
+    description = "Finish the Lake Powell Race in 1st place using the Armed Response boat",
+    points = ,
+    trigger =
+)
 
 // Leaderboards
 
