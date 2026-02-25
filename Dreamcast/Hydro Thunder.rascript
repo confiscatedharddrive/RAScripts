@@ -702,19 +702,17 @@ achievement(
     description = "Win 3rd place or higher on any Easy race in first person mode",
     points = 3,
     trigger = 
-        NotInMenus() &&
+        ModeCheck() && ViewCheck() &&
+        prev(RaceFlag == Start) &&
+        trigger_when(RaceFlag == End && Position <=3) &&        //Core condition; check that a race has been finished in first person
 
-        ((ModeCheck() && ViewCheck() &&
-        (Track == ThunderPark && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+       (NotInMenus() ||                                         // Alt groups start; () indicates grouping separate from core condition
+        
+        Track == ThunderPark ||
 
-        (ModeCheck() && ViewCheck() &&
-        (Track == LostIsland && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))) ||
-
-        (ModeCheck() && ViewCheck() &&
-        (Track == ArcticCircle && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))))
+        Track == LostIsland ||
+        
+        Track == ArcticCircle)
 )
 
 achievement(
@@ -722,19 +720,17 @@ achievement(
     description = "Win 3rd place or higher on any Medium race in first person mode",
     points = 4,
     trigger =
-        NotInMenus() &&
-
-        ((ModeCheck() && ViewCheck() &&
-        (Track == GreekIsles && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position <= 3))) ||
-
-        (ModeCheck() && ViewCheck() &&
-        (Track == LakePowell && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+        ModeCheck() && ViewCheck() &&
+        prev(RaceFlag == Start) &&
+        trigger_when(RaceFlag == End && Position <=3) && 
         
-        (ModeCheck() && ViewCheck() &&
-        (Track == TheFarEast && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))))
+        (NotInMenus() ||                                
+        
+        Track == GreekIsles ||
+
+        Track == LakePowell ||
+        
+        Track == TheFarEast)
 )
 
 achievement(
@@ -742,19 +738,17 @@ achievement(
     description = "Win 3rd place or higher on any Hard race in first person mode",
     points = 5,
     trigger =
-        NotInMenus() &&
+        ModeCheck() && ViewCheck() &&
+        prev(RaceFlag == Start) &&
+        trigger_when(RaceFlag == End && Position <=3) && 
+        
+        (NotInMenus() ||
 
-        ((ModeCheck() && ViewCheck() &&
-        (Track == ShipGraveyard && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+        Track == ShipGraveyard ||
 
-        (ModeCheck() && ViewCheck() &&
-        (Track == VeniceCanals && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+        Track == VeniceCanals ||
 
-        (ModeCheck() && ViewCheck() &&
-        (Track == NYDisaster && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))))
+        Track == NYDisaster)
 )
 
 achievement(
@@ -762,23 +756,19 @@ achievement(
     description = "Win 3rd place or higher on any Bonus race in first person mode",
     points = 10,
     trigger =
-        NotInMenus() &&
+        ModeCheck() && ViewCheck() &&
+        prev(RaceFlag == Start) &&
+        trigger_when(RaceFlag == End && Position <=3) && 
+        
+        (NotInMenus() ||
+        
+        Track == CastleVonDandy ||
 
-        ((ModeCheck() && ViewCheck() &&
-        (Track == CastleVonDandy && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+        Track == Catacomb ||
 
-        (ModeCheck() && ViewCheck() &&
-        (Track == Catacomb && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))) ||
+        Track == HydroSpeedway ||
 
-        (ModeCheck() && ViewCheck() &&
-        (Track == HydroSpeedway && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))) ||
-
-        (ModeCheck() && ViewCheck() &&
-        (Track == NileAdventure && prev(RaceFlag == Start) &&
-        trigger_when(RaceFlag == End && Position <= 3))))
+        Track == NileAdventure)
 )
 
 achievement(
@@ -797,10 +787,11 @@ achievement(
     description = "Finish the Arctic Circle Race in 1st place using the Tinytanic boat",
     points = ,
     trigger =
-        NotInMenus() &&
-        ((ModeCheck() && Boat == Tinytanic &&
+        ModeCheck() && 
+        Boat == Tinytanic &&
         (Track == ArcticCircle && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position == 1))))
+        trigger_when(RaceFlag == End && Position == 1))
+
 )
 
 achievement(
@@ -808,10 +799,10 @@ achievement(
     description = "Finish the N.Y. Disaster Race in 1st place using the Blowfish boat",
     points = ,
     trigger =
-        NotInMenus() &&
-        ((ModeCheck() && Boat == Blowfish &&
+        ModeCheck() && 
+        Boat == Blowfish &&
         (Track == NYDisaster && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position == 1))))
+        trigger_when(RaceFlag == End && Position == 1))
 )
 
 achievement(
@@ -819,10 +810,10 @@ achievement(
     description = "Finish the Nile Adventure Race in 1st place using the Chumdinger boat",
     points = ,
     trigger =
-        NotInMenus() &&
-        ((ModeCheck() && Boat == Chumdinger &&
+        ModeCheck() && 
+        Boat == Chumdinger &&
         (Track == NileAdventure && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position == 1))))
+        trigger_when(RaceFlag == End && Position == 1))
 )
 
 achievement(
@@ -830,10 +821,10 @@ achievement(
     description = "Finish the Lake Powell Race in 1st place using the Armed Response boat",
     points = ,
     trigger =
-        NotInMenus() &&
-        ((ModeCheck() && Boat == ArmedResponse &&
+        ModeCheck() && 
+        Boat == ArmedResponse &&
         (Track == LakePowell && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position == 1))))
+        trigger_when(RaceFlag == End && Position == 1))
 )
 
 // Leaderboards
