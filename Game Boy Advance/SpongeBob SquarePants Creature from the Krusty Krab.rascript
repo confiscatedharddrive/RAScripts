@@ -999,14 +999,14 @@ achievement(
                     usa_in_stage() && 
                     prev(stage_position_y()) != 2307 &&
                     stage_position_y() == 2307 && 
-                    repeated(10, usa_health() > 0 && usa_health() < prev(usa_health()))) ||
+                    measured(repeated(10, usa_health() > 0 && usa_health() < prev(usa_health())))) ||
                
                     (europe() && 
                     eur_screen() == 28 && 
                     europe_in_stage() && 
                     prev(stage_position_y()) != 2307 &&
                     stage_position_y() == 2307 && 
-                    repeated(10, eur_health() > 0 && eur_health() < prev(eur_health())))
+                    measured(repeated(10, eur_health() > 0 && eur_health() < prev(eur_health()))))
                     )
 )
 
@@ -1028,8 +1028,8 @@ achievement(
                 (
                     (usa() && 
                     prev(usa_in_stage()) &&
-                    unless(once(usa_screen() == 31 && 
-                    laser_hit()))) ||
+                    unless(once(usa_screen() == 31 && usa_health() > 0 &&
+                    laser_hit_ntsc()))) ||
                     
                     (europe() && 
                     prev(europe_in_stage()) &&
@@ -1146,35 +1146,35 @@ achievement(
                 (
                     (usa() && 
                     sponge_racer() && 
-                    prev(usa_screen()) == 38 &&
+                    prev(usa_screen() == 38) &&
                     trigger_when(usa_screen() == 120) && 
                     unless(once(time_left() == 328))) ||
                     (usa() && 
                     pat_racer() && 
-                    prev(usa_screen()) == 37 &&
+                    prev(usa_screen() == 37) &&
                     trigger_when(usa_screen() == 118) && 
                     unless(once(time_left() == 628))) ||
                     (usa() && 
                     plank_racer() && 
-                    prev(usa_screen()) == 39 &&
+                    prev(usa_screen() == 39) &&
                     trigger_when(usa_screen() == 119) && 
-                    unless(once(time_left() == 208)))
+                    unless(once(time_left() == 208))) ||
                     
                     (europe() && 
                     sponge_racer() && 
-                    prev(eur_screen()) == 38 &&
+                    prev(eur_screen() == 38) &&
                     trigger_when(eur_screen() == 120) && 
                     unless(once(time_left() == 328))) ||
                     (europe() && 
                     pat_racer() && 
-                    prev(eur_screen()) == 37 &&
+                    prev(eur_screen() == 37) &&
                     trigger_when(eur_screen() == 118) && 
                     unless(once(time_left() == 628))) ||
                     (europe() && 
                     plank_racer() && 
-                    prev(eur_screen()) == 39 &&
+                    prev(eur_screen() == 39) &&
                     trigger_when(eur_screen() == 119) && 
-                    unless(once(time_left() == 208))) ||
+                    unless(once(time_left() == 208)))
                )
 )
 
@@ -1368,7 +1368,7 @@ leaderboard(
     submit = 
             (
                 (usa() && 
-                usa_scene == 12) ||
+                usa_scene() == 12) ||
                 
                 (europe() && 
                 eur_scene() == 12)
@@ -1483,7 +1483,7 @@ MinigameLookup = {
     87: "Hurdle",
 }
 
-rich_presence_conditional_display( &&
+rich_presence_conditional_display(
     startup(), "🫧 Diving into Bikini Bottom 🫧")
 
 rich_presence_conditional_display(usa() && usa_screen() == 59, "At the Title Screen")
