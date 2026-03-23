@@ -1049,3 +1049,58 @@ leaderboard(
             measured(FinalTime()),
     format = "MILLISECS", lower_is_better = true
 )
+
+
+// Rich Presence Script
+
+Format:Lap
+FormatType=VALUE
+
+Format:Position
+FormatType=VALUE
+
+Lookup:Screen
+485382=Joining the H.T.R.A.
+486536=On the Main Menu
+584846=Selecting a track...
+585350=Selecting a boat...
+2097152=Demo Playing
+
+Lookup:Track
+2704336=at Thunder Park
+2704416=at Lost Island
+2704496=at Arctic Circle
+2704256=at the Greek Isles
+2704176=at Lake Powell
+2704096=at The Far East
+2704576=at the Ship Graveyard
+2704656=at Venice Canals
+2704736=at N.Y. Disaster
+2705056=at Castle Von Dandy
+2704976=at the Catacomb
+2704896=at Hydro Speedway
+2704816=at Nile Adventure
+
+Lookup:Boat
+2705392=Damn the Torpedoes
+2705476=Midway
+2705560=Miss Behave
+2705308=Banshee
+2705224=Tidal Blade
+2705140=Thresher
+2705644=Cutthroat
+2705728=Rad Hazard
+2705812=Razorback
+2706148=Tinytanic
+2706064=Armed Response
+2705980=Blowfish
+2705896=Chumdinger
+
+Display:
+?0xWD78E2C=485382?@Screen(0xWD78E2C)
+?0xWD78E2C=486536?@Screen(0xWD78E2C)
+?0xWD78E2C=584846?@Screen(0xWD78E2C)
+?0xWD78E2C=585350?@Screen(0xWD78E2C)
+?0xWD78E2C=2097152?@Screen(0xWD78E2C)
+?0xM1E0C9C=1?Racing @Track(0xW2942DC) | 🚤: @Boat(0xW2946F0) | 🚩: @Position(0xH25643C)/8
+🌊🚤
