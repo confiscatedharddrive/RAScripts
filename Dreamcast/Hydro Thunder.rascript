@@ -1102,5 +1102,5 @@ Display:
 ?0xWD78E2C=584846?@Screen(0xWD78E2C)
 ?0xWD78E2C=585350?@Screen(0xWD78E2C)
 ?0xWD78E2C=2097152?@Screen(0xWD78E2C)
-?0xM1E0C9C=1?Racing @Track(0xW2942DC) | 🚤: @Boat(0xW2946F0) | 🚩: @Position(0xH25643C)/8
-🌊🚤
+?0xM1E0C9C=1?Racing @Track(0xW2942DC) | 🚤: @Boat(0xW2946F0) | 🚩: @Position(0xH25643C)/16
+🚤🌊🌊
