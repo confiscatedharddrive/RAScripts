@@ -1053,9 +1053,6 @@ leaderboard(
 
 // Rich Presence Script
 
-Format:Lap
-FormatType=VALUE
-
 Format:Position
 FormatType=VALUE
 
