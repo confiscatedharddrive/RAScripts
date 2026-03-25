@@ -261,8 +261,8 @@ once(Track == CastleVonDandy && CastleVonDandyWindow())))
 // 0xD0A0A4: [Bitflag] [Boolean] Nile Adventure Hidden Boost
 function NileAdventureHiddenBoost() => prev(bit0(0xD0A0A4)) == 0 && bit0(0xD0A0A4) == 1
 
-// 0xD10382: [Bitflag] [Boolean] Nile Adventure Mummy Shortcut Hidden Boost
-function NileAdventureMummy() => prev(bit0(0xD10382)) == 0 && bit0(0xD10382) == 1
+// 0xCF61A4: [Bitflag] [Boolean] Nile Adventure Mummy Shortcut Hidden Boost
+function NileAdventureMummy() => prev(bit0(0xCF61A4)) == 0 && bit0(0xCF61A4) == 1
 
 function NileAdventureBoostGet() => measured(tally(2, once(Track == NileAdventure && NileAdventureHiddenBoost()),
 once(Track == NileAdventure && NileAdventureMummy())))
@@ -275,6 +275,7 @@ once(Track == NileAdventure && NileAdventureMummy())))
 //           0x03F7BA: Pause Screen/Leaderboard
 //           0x000000: In Race
 //           0x200000: Demo
+//           0x40001: Booting
 Screen = tbyte(0xD78E2C)
 
 Title = 0x076806
@@ -562,7 +563,7 @@ achievement(
 achievement(
     title = "Scorched Skipper",
     description = "Grab the hidden boost in the volcano in Lost Island",
-    points = 1,
+    points = 2,
     trigger =
         ModeCheck() &&
         InRace == True &&
@@ -603,7 +604,7 @@ achievement(
 achievement(
     title = "Learn 2 Super Boost Start",
     description = "Grab the hidden boost in the cave at the start of The Far East", 
-    points = 10, 
+    points = 5, 
     trigger = 
         ModeCheck() &&
         InRace == True &&
@@ -637,7 +638,7 @@ achievement(
     title = "The (Speedy) Scenic Route",
     description = "Grab the +4 boost behind the yellow turning lights, the +9 boost between the buildings, the hidden chandelier boost,
                    and take the shortcut in the sewers in Venice Canals",
-    points = 4,
+    points = 5,
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
@@ -668,7 +669,7 @@ achievement(
 achievement(
     title = "Take the Bait",
     description = "Grab the hidden boost in Hydro Speedway",
-    points = 1,
+    points = 2,
     trigger =
         ModeCheck() &&
         InRace == True &&
@@ -679,7 +680,7 @@ achievement(
 achievement(
     title = "A Royal Pain",
     description = "Grab all 3 hidden boosts in Castle Von Dandy without flipping the boat",
-    points = 5,
+    points = 10,
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
@@ -690,7 +691,7 @@ achievement(
 achievement(
     title = "Tomb Racer",
     description = "Grab both +9 hidden boosts in Nile Adventure",
-    points = 10,
+    points = 5,
     trigger =
         ModeCheck() &&
         never(InRace != True) &&
@@ -700,7 +701,7 @@ achievement(
 achievement(
     title = "Speedy Breezy",
     description = "Win 3rd place or higher on any Easy race in first person mode",
-    points = 3,
+    points = 2,
     trigger = 
         ModeCheck() && ViewCheck() &&
         prev(RaceFlag == Start) &&
@@ -781,11 +782,10 @@ achievement(
         measured(repeated(15, SmashCount()))
 )
 
-//Still need to figure out scoring on these
 achievement(
     title = "Inverse Relations",
     description = "Finish the Arctic Circle Race in 1st place using the Tinytanic boat",
-    points = ,
+    points = 5,
     trigger =
         ModeCheck() && 
         Boat == Tinytanic &&
@@ -797,7 +797,7 @@ achievement(
 achievement(
     title = "Survivorship Bias",
     description = "Finish the N.Y. Disaster Race in 1st place using the Blowfish boat",
-    points = ,
+    points = 10,
     trigger =
         ModeCheck() && 
         Boat == Blowfish &&
@@ -807,19 +807,19 @@ achievement(
 
 achievement(
     title = "Dog Day Afternoon",
-    description = "Finish the Nile Adventure Race in 1st place using the Chumdinger boat",
-    points = ,
+    description = "Finish the Nile Adventure Race in 3rd place or higher using the Chumdinger boat",
+    points = 25,
     trigger =
         ModeCheck() && 
         Boat == Chumdinger &&
         (Track == NileAdventure && prev(RaceFlag == Start) && 
-        trigger_when(RaceFlag == End && Position == 1))
+        trigger_when(RaceFlag == End && Position <= 3))
 )
 
 achievement(
     title = "Turncoat Boat",
     description = "Finish the Lake Powell Race in 1st place using the Armed Response boat",
-    points = ,
+    points = 10,
     trigger =
         ModeCheck() && 
         Boat == ArmedResponse &&
@@ -1057,6 +1057,7 @@ Format:Position
 FormatType=VALUE
 
 Lookup:Screen
+262145=🚤 Joining the H.T.R.A.
 485382=🚤 Joining the H.T.R.A.
 486536=🌊 On the Main Menu
 584846=🏁 Selecting a track...
@@ -1094,7 +1095,7 @@ Lookup:Boat
 2705896=Chumdinger
 
 Display:
-?0xWD78E2C=485382?@Screen(0xWD78E2C)
+?O:0xWD78E2C=262145_0xWD78E2C=485382?@Screen(0xWD78E2C)
 ?0xWD78E2C=486536?@Screen(0xWD78E2C)
 ?0xWD78E2C=584846?@Screen(0xWD78E2C)
 ?0xWD78E2C=585350?@Screen(0xWD78E2C)
